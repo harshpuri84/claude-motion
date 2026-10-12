@@ -50,7 +50,7 @@ const TIMELINE = {
   shots: SHOTS.map(([key, era, t0, t1, title], i) => ({ id: i + 1, key, era, t0, t1, title })),
   cuts: [31],
   morphs: [4, 9, 14, 18, 23, 28, 33, 39],
-  cues: {},
+  cues: { touchdown: 31.0 },
   acts: [
     { name: 'Origin', role: 'build', t0: 0, t1: 14 },
     { name: 'Main leg', role: 'journey', t0: 14, t1: 23 },
