@@ -11,9 +11,9 @@ const BP = {
 function bpHex(h) { if (h[0] !== '#') { const m = h.match(/\d+/g).map(Number); return m; } return [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16)); }
 function bpMix(a, b, u) { const A = bpHex(a), Bb = bpHex(b); return '#' + A.map((v, i) => Math.round(v + (Bb[i] - v) * u).toString(16).padStart(2, '0')).join(''); }
 function bpGrad(stops, y) {   // stops: [[y, '#hex'], ...] sorted by y
-  if (y <= stops[0][0]) return stops[0][1];
+  if (y <= stops[0][0]) return bpMix(stops[0][1], stops[0][1], 0);
   for (let i = 1; i < stops.length; i++) if (y <= stops[i][0]) return bpMix(stops[i - 1][1], stops[i][1], (y - stops[i - 1][0]) / (stops[i][0] - stops[i - 1][0]));
-  return stops[stops.length - 1][1];
+  return bpMix(stops[stops.length - 1][1], stops[stops.length - 1][1], 0);
 }
 // the medium: a field of long, nearly horizontal strokes whose colour follows a vertical gradient
 function bpStrokes(x0, y0, x1, y1, stops, o = {}) {
@@ -210,9 +210,9 @@ function handW(str, size) { ctx.save(); ctx.font = `400 ${size}px ${HAND}`; cons
 const STYLE = {
   name: 'ballpoint',
   paper: '#ece6d3',
-  backdrop(c) { ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.fillStyle = c; ctx.fillRect(0, 0, W, H); ctx.restore(); bpStrokes(0, 0, W, H, [[0, c[0] === '#' ? c : '#ece6d3'], [H, c[0] === '#' ? c : '#ece6d3']], { key: 'bd', per: 300, al: 0.5 }); },
+  backdrop(c) { ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.fillStyle = c; ctx.fillRect(0, 0, W, H); bpStrokes(0, 0, W, H, [[0, c], [H, bpMix(c, '#151a48', 0.15)]], { key: 'bd', per: 200, al: 0.6 }); ctx.restore(); },
   window(P, key, src) { ctx.save(); trace(P, true); ctx.clip(); ctx.drawImage(src, 0, 0); ctx.restore(); ctx.strokeStyle = BP.creamW; ctx.lineWidth = 4; trace(wobble(P, true, 1.2, key), true); ctx.stroke(); },
-  blob(P, c, key) { bpFill(P, [[0, c[0] === '#' ? c : BP.cream], [H, c[0] === '#' ? c : BP.cream]], { key, lw: 3 }); },
+  blob(P, c, key) { const bb = bbox(P); bpFill(P, [[bb.y0, bpMix(c, '#ffffff', 0.2)], [bb.y1, bpMix(c, '#151a48', 0.25)]], { key, lw: 3, base: c }); },
   hero(x, y, r, o) { bpCarton(x, y, r * 1.6, { ...o, key: o.key }); },
   heroColor: '#d4382c',
   heroPts: (x, y, r) => ellipsePts(x, y, r, r * 0.8, 0, 96),

@@ -40,6 +40,12 @@ To render the storyboard yourself, run this from the repo root. `$SKILL` is the 
 node $SKILL/tools/build.mjs pieces/air-shipment && node $SKILL/tools/storyboard.mjs pieces/air-shipment
 ```
 
+To render the full video with its score (about 4 minutes on a laptop), run this. The MP4 lands in `pieces/air-shipment/renders/share.mp4`.
+
+```bash
+node $SKILL/tools/export.mjs pieces/air-shipment --share
+```
+
 ## Notes
 
 - If `npm i -g playwright` fails with `EEXIST`, you probably have Python Playwright installed. Run `npm i playwright` inside the skill folder instead.

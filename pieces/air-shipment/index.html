@@ -50,7 +50,7 @@ const TIMELINE = {
   shots: SHOTS.map(([key, era, t0, t1, title], i) => ({ id: i + 1, key, era, t0, t1, title })),
   cuts: [31],
   morphs: [4, 9, 14, 18, 23, 28, 33, 39],
-  cues: {},
+  cues: { touchdown: 31.0 },
   acts: [
     { name: 'Origin', role: 'build', t0: 0, t1: 14 },
     { name: 'Main leg', role: 'journey', t0: 14, t1: 23 },
@@ -617,9 +617,9 @@ const BP = {
 function bpHex(h) { if (h[0] !== '#') { const m = h.match(/\d+/g).map(Number); return m; } return [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16)); }
 function bpMix(a, b, u) { const A = bpHex(a), Bb = bpHex(b); return '#' + A.map((v, i) => Math.round(v + (Bb[i] - v) * u).toString(16).padStart(2, '0')).join(''); }
 function bpGrad(stops, y) {   // stops: [[y, '#hex'], ...] sorted by y
-  if (y <= stops[0][0]) return stops[0][1];
+  if (y <= stops[0][0]) return bpMix(stops[0][1], stops[0][1], 0);
   for (let i = 1; i < stops.length; i++) if (y <= stops[i][0]) return bpMix(stops[i - 1][1], stops[i][1], (y - stops[i - 1][0]) / (stops[i][0] - stops[i - 1][0]));
-  return stops[stops.length - 1][1];
+  return bpMix(stops[stops.length - 1][1], stops[stops.length - 1][1], 0);
 }
 // the medium: a field of long, nearly horizontal strokes whose colour follows a vertical gradient
 function bpStrokes(x0, y0, x1, y1, stops, o = {}) {
@@ -816,9 +816,9 @@ function handW(str, size) { ctx.save(); ctx.font = `400 ${size}px ${HAND}`; cons
 const STYLE = {
   name: 'ballpoint',
   paper: '#ece6d3',
-  backdrop(c) { ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.fillStyle = c; ctx.fillRect(0, 0, W, H); ctx.restore(); bpStrokes(0, 0, W, H, [[0, c[0] === '#' ? c : '#ece6d3'], [H, c[0] === '#' ? c : '#ece6d3']], { key: 'bd', per: 300, al: 0.5 }); },
+  backdrop(c) { ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.fillStyle = c; ctx.fillRect(0, 0, W, H); bpStrokes(0, 0, W, H, [[0, c], [H, bpMix(c, '#151a48', 0.15)]], { key: 'bd', per: 200, al: 0.6 }); ctx.restore(); },
   window(P, key, src) { ctx.save(); trace(P, true); ctx.clip(); ctx.drawImage(src, 0, 0); ctx.restore(); ctx.strokeStyle = BP.creamW; ctx.lineWidth = 4; trace(wobble(P, true, 1.2, key), true); ctx.stroke(); },
-  blob(P, c, key) { bpFill(P, [[0, c[0] === '#' ? c : BP.cream], [H, c[0] === '#' ? c : BP.cream]], { key, lw: 3 }); },
+  blob(P, c, key) { const bb = bbox(P); bpFill(P, [[bb.y0, bpMix(c, '#ffffff', 0.2)], [bb.y1, bpMix(c, '#151a48', 0.25)]], { key, lw: 3, base: c }); },
   hero(x, y, r, o) { bpCarton(x, y, r * 1.6, { ...o, key: o.key }); },
   heroColor: '#d4382c',
   heroPts: (x, y, r) => ellipsePts(x, y, r, r * 0.8, 0, 96),
@@ -1078,11 +1078,28 @@ function sceneTouchdown() {
   bpTag('06', 'Arrival');
 }
 // =====================================================================
-//  ERAS, CAMERAS, BRIDGES — morphs are wired after the storyboard is approved
+//  ERAS, CAMERAS, BRIDGES — 8 shape morphs and one hard cut (31s, the touchdown)
 // =====================================================================
-const ERA_BG = ['#283888', '#3995cb', '#283888', '#151a48', '#3995cb', '#2b58b9', '#151a48', '#3a3f63', '#2b58b9', '#283888'];
-function pieceCam(era, t) { return null; }
-const BRIDGES = [];
+const ERA_BG = ['#283888', '#3995cb', '#283888', '#151a48', '#3995cb', '#2b58b9', '#151a48', '#5b5fae', '#5b5fae', '#283888'];
+function pieceCam(era, t) {
+  if (era === 5) return push(t, 23.4, 27.4, { z: 1.12, p: [600, 900], to: [540, 820] }, 27.4, 27.8);   // drift toward the sun before it becomes the origin glow
+  if (era === 9) return push(t, 40.6, 44.4, { z: 1.1, p: [470, 1010], to: [540, 900] });             // settle on the carton
+  return null;
+}
+const slipPts = () => xform(bpRect(0, 0, 300, 210), 640, 560, 0.05);
+const truckBox = (t) => { const tx = 300 + (t - 4) * 70, ty = 1150; return bpRect(tx - 247, ty - 218.5, 355, 190); };
+const uldPts = (x, y, s) => resample([[x - s * 0.5, y], [x + s * 0.28, y], [x + s * 0.5, y - s * 0.32], [x + s * 0.5, y - s * 0.84], [x - s * 0.5, y - s * 0.84]], true, 14);
+const vanPts = (vx, vy = 1180) => resample([[vx - 220, vy - 40], [vx - 220, vy - 250], [vx + 120, vy - 250], [vx + 220, vy - 150], [vx + 220, vy - 40]], true, 14);
+const BRIDGES = [
+  { tc: 4,  A: () => ({ P: slipPts(), c: '#f6f1e2' }), B: () => ({ P: truckBox(4), c: '#f2ecdc' }) },                                       // the booking slip -> the truck box
+  { tc: 9,  A: () => ({ P: truckBox(9), c: '#f2ecdc' }), B: () => ({ P: uldPts(540, 1210, 620), c: '#c8cce0' }) },                          // the truck box -> the ULD
+  { tc: 14, A: () => ({ P: uldPts(540, 1210, 620), c: '#c8cce0' }), B: () => ({ P: uldPts(560, 1000, 260), c: '#c8cce0' }) },              // the ULD -> the ULD on the loader
+  { tc: 18, A: () => ({ P: uldPts(560, 690, 260), c: '#c8cce0' }), B: () => ({ P: ellipsePts(160, 1090, 280, 170, 0, 64), c: '#ece6d3' }) }, // the ULD -> a cloud
+  { tc: 23, A: () => ({ P: ellipsePts(980, 930, 250, 150, 0, 64), c: '#ece6d3' }), B: () => ({ P: ellipsePts(600, 1230, 300, 140, 0, 64), c: '#f3d9c4' }) }, // cloud -> the cloud sea
+  { tc: 28, A: () => ({ P: ellipsePts(600, 975, 200, 200, 0, 64), c: '#f2c84b' }), B: () => ({ P: ellipsePts(190, 1010, 200, 200, 0, 64), c: '#ef8f3c' }) }, // the sun -> the origin glow
+  { tc: 33, A: () => ({ P: ellipsePts(580, 830, 200, 200, 0, 64), c: '#1b2358' }), B: () => ({ P: vanPts(260), c: '#f6f1e2' }) },          // the x-ray window -> the van
+  { tc: 39, A: () => ({ P: vanPts(680), c: '#f6f1e2' }), B: () => ({ P: bpRect(570, 720, 200, 200), c: '#ffd98a' }) },                       // the van -> the lit front door
+];
 
 // =====================================================================
 //  kit/morph.js — the renderer for pieces built from ERAS (scenes) joined by SHAPE MORPHS.
@@ -1410,9 +1427,72 @@ async function buildScore(sampleRate = 48000, part = 'mix', normIn = null) {
   }
   const claudeMotif = (t, notes, vel) => notes.forEach(([n, dt], i) => pluck(t + dt, nz(n), vel, -0.15 + i * 0.1, 0.6, 1300, 0.35));
   const childMotif = (t, notes, vel, bright = 5200, send = 0.3) => notes.forEach(([n, dt], i) => pluck(t + dt, nz(n), vel, 0.2 - i * 0.1, 0.32, bright, send));
-  // SCORE BODY — placeholder for the storyboard stage; the real score is written after the board is approved
+  // SCORE BODY — one air shipment. D major, 120 BPM. Thin at origin, groove on the main leg, fullest above the clouds,
+  // dead silence over the night earth, the loudest hit on touchdown (31.0), warm and decaying to the doorstep.
+  const R = RNG('score');
+  const FIG = [['D4', 'A4', 'Fs4', 'A4', 'D5', 'A4', 'Fs4', 'A4'], ['B3', 'Fs4', 'D4', 'Fs4', 'B4', 'Fs4', 'D4', 'Fs4'],
+    ['G3', 'D4', 'B3', 'D4', 'G4', 'D4', 'B3', 'D4'], ['A3', 'E4', 'Cs4', 'E4', 'A4', 'E4', 'Cs4', 'E4']];
+  const ROOT = ['D2', 'B1', 'G1', 'A1'];
+  const BOX = [['D4', 0], ['A4', E8]];   // the carton's motif: a rising fifth, once per hand-off
+  const boxMotif = (t, vel) => BOX.forEach(([n, dt], i) => pluck(t + dt, nz(n), vel, 0.1 - i * 0.2, 0.6, 2600, 0.35));
+  const each = (t0, t1, step, fn) => { for (let k = 0; t0 + k * step < t1 - 1e-6; k++) fn(t0 + k * step, k); };
+
+  // ================= MUSIC =================
   to = 'm';
-  pad(0.0, 45.0, ['D3', 'A3', 'Fs4'], 0.03, { type: 'triangle', cut: 900, att: 0.5, rel: 0.5 });
+  // the bed: pads overlap by ~1s and fade in/out slowly, so a morph never lands in a hole
+  const bed = (t0, t1, notes, peak, o = {}) => pad(Math.max(0, t0 - 0.5), t1 + 0.6, notes, peak, { att: 1.0, rel: 1.0, send: 0.4, ...o });
+  drone(0.0, 28.0, nz('D2'), 0.035, { att: 1.5, rel: 0.25 });
+  bed(0.0, 14.0, ['D3', 'A3', 'Fs4'], 0.03, { type: 'triangle', cut: 900 });
+  bed(14.0, 23.0, ['D3', 'A3', 'E4'], 0.03, { cut: 1000 });
+  pad(22.5, 28.0, ['D3', 'A3', 'E4', 'A4'], 0.034, { cut: 1300, att: 1.0, rel: 0.02, send: 0.12 });   // stops dead into the night
+  [0.5].forEach((t) => boxMotif(t, 0.12));
+  [4.0, 9.0, 14.0].forEach((t) => boxMotif(t + E8, 0.07));   // a quiet nod just after each hand-off
+  each(1.0, 9.0, BEAT, (t, k) => pluck(t, nz(FIG[Math.floor(k / 4) % 4][(k * 2) % 8]), 0.05, Math.sin(k) * 0.3, 0.4, 2400, 0.3));
+  each(9.0, 14.0, E8, (t, k) => { pluck(t, nz(FIG[Math.floor(k / 8) % 4][k % 8]), 0.052 * (k % 2 ? 0.75 : 1), Math.sin(k * 0.9) * 0.3, 0.32, 3000, 0.2); if (k % 4 === 0) bass(t, nz(ROOT[Math.floor(k / 8) % 4]), 0.13); });
+  // main leg (14-23): 8ths, then 16ths from the climb
+  each(14.0, 23.0, E16, (t, k) => {
+    const climb = t >= 18, fig = FIG[Math.floor(k / 16) % 4], acc = (k % 4 === 0 ? 1.2 : k % 2 === 0 ? 1.0 : 0.75) * (climb ? Math.min(1, 0.35 + (t - 18) / 1.5) : 1);
+    if (climb || k % 2 === 0) pluck(t, nz(fig[k % 8]), 0.048 * acc, Math.sin(k * 0.9) * 0.35, 0.3, 3400, 0.16);
+    if (k % 2 === 0) bass(t, nz(ROOT[Math.floor(k / 16) % 4]), 0.14);
+    if (climb && t >= 19 && k % 4 === 0) sub(t, 0.05);
+  });
+  riser(16.5, 18.0, 0.006);
+  // above the clouds (23-28): the fullest; dry in the last beat, stops dead at 28.0
+  each(23.0, 28.0, E16, (t, k) => {
+    const fig = FIG[Math.floor(k / 16) % 4], acc = k % 4 === 0 ? 1.25 : 0.9, dry = t >= 27.5 ? 0.02 : 0.12;
+    pluck(t, nz(fig[k % 8]), 0.056 * acc, Math.sin(k * 0.9) * 0.4, t >= 27.75 ? 0.18 : 0.28, 5200, dry);
+    pluck(t, nz(fig[k % 8]) * 2, 0.015 * acc, -Math.sin(k * 0.9) * 0.4, 0.18, 7000, dry * 0.5);
+    if (k % 2 === 0) bass(t, nz(ROOT[Math.floor(k / 16) % 4]), 0.14);
+    if (k % 4 === 0) sub(t, 0.06);
+    noiseHit(t, 0.016, 'highpass', 8500, 0.7, k % 2 ? 0.015 : 0.026, k % 2 ? 0.3 : -0.3);
+  });
+  [23.5, 25.0, 26.5].forEach((t, i) => chime(t, [nz('A5'), nz('D6'), nz('Fs6')], 0.028, (i - 1) * 0.3));
+  // night (28-31): one faint high note; the rest is room tone (SFX)
+  pluck(28.6, nz('Fs5'), 0.012, 0.3, 0.9, 1600, 0.5);
+  // touchdown (31.0): stab + sub on the hit, a flat chord that hands over to the last-mile bed without a gap
+  ['D3', 'A3', 'D4', 'Fs4', 'A4', 'D5'].forEach((n, i) => pluck(31.0 + i * 0.006, nz(n), 0.36, (i - 2.5) * 0.15, 0.7, 5200, 0.4));
+  sub(31.0, 0.35);
+  pad(31.0, 34.6, ['D3', 'A3', 'D4', 'Fs4', 'A4', 'D5'], 0.16, { cut: 2400, att: 0.01, rel: 3.2, send: 0.4 });   // the flat chord: one sound, decays slowly through the 33s morph
+  drone(31.0, 45.0, nz('D2'), 0.028, { att: 0.02, rel: 1.2 });
+  pad(32.0, 39.6, ['D3', 'A3', 'D4', 'Fs4'], 0.017, { cut: 1000, att: 1.6, rel: 1.0, send: 0.4 });
+  bed(39.0, 44.4, ['D3', 'A3', 'Fs4'], 0.018, { type: 'triangle', cut: 900 });
+  [33.0, 39.0].forEach((t) => boxMotif(t + E8, 0.06));
+  each(33.5, 39.0, E8, (t, k) => { if (k % 2 === 0 || k % 8 === 5) pluck(t, nz(FIG[Math.floor(k / 8) % 4][k % 8]), 0.022, Math.sin(k) * 0.3, 0.35, 2600, 0.25); if (k % 4 === 0) bass(t, nz(ROOT[Math.floor(k / 8) % 4]), 0.06); });
+  [[41.0, 'A4'], [41.5, 'D5'], [42.0, 'Fs5'], [43.0, 'E5'], [43.5, 'D5']].forEach(([t, n], i) => pluck(t, nz(n), 0.02, (i - 2) * 0.15, 0.7, 2800, 0.45));
+
+  // ================= SFX =================
+  to = 's';
+  [4, 9, 14, 18, 23, 33, 39].forEach((tc) => sweep(tc - 0.6, tc + 0.05, 0.006, 600, 3200, 0));   // a soft swish into each morph
+  drone(28.2, 30.3, 55, 0.0015, { att: 0.4, rel: 0.3 });   // room tone: a faint low hum, well under -40 dB                                   // room tone under the night
+  each(1.0, 2.2, E16, (t) => noiseHit(t, 0.05, 'bandpass', 3200 + R.n(400), 2, 0.03, 0.3));          // the slip prints
+  noiseHit(4.2, 2.0, 'lowpass', 400, 0.8, 0.02, -0.2, 0, 220);                                        // truck rumble
+  [10.4, 11.0, 11.6].forEach((t) => noiseHit(t, 0.12, 'lowpass', 700, 1, 0.08));                       // cartons land
+  sweep(14.3, 17.0, 0.02, 200, 900, 0);                                                              // the loader whine
+  sweep(15.5, 18.4, 0.012, 180, 700, 0);                                                            // engines spool up across the morph
+  noiseHit(30.85, 0.15, 'bandpass', 2600, 4, 0.05, 0, 0, 1400);                                       // tyre chirp into the hit
+  noiseHit(31.0, 2.4, 'lowpass', 1000, 0.7, 0.07, 0, 0.3, 160);                                       // the touchdown roar, a long rollout
+  [36.0, 36.15].forEach((t) => chime(t, [nz('A6')], 0.012, 0.4));                                      // a bicycle bell
+  each(40.0, 41.6, E16, (t) => noiseHit(t, 0.06, 'bandpass', 2400 + R.n(300), 1.6, 0.014, 0.25));    // the signature
   // =====================================================================
   //  kit/score-tail.js — render, fold the tail over the loop point, loudness stage
   //  (RMS-normalise to -17 dBFS, look-ahead limiter at -1 dBFS; stems share the mix gain curve)
