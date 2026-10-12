@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>One air shipment</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #10132e; overflow: hidden; }
+  body { display: flex; align-items: center; justify-content: center; }
+  canvas { height: min(100vh, calc(100vw * 5 / 4)); width: auto; aspect-ratio: 4 / 5; display: block; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1080" height="1350"></canvas>
+<script>
+"use strict";
+// =====================================================================
+//  ONE AIR SHIPMENT — 4:5, 45s @ 120 BPM, 24fps. A carton with a red band goes booking -> POD.
+//  Each hand-off stamps it; the last frame returns to the first, changed (dawn -> dusk, empty dock -> a doorstep).
+// =====================================================================
+const FPS = 24, W = 1080, H = 1350;
+const BPM = 120, BEAT = 60 / BPM, E8 = BEAT / 2, E16 = BEAT / 4;
+const DURATION = 45.0;
+const NFRAMES = Math.round(DURATION * FPS);
+const LOOP_T = NFRAMES / FPS;
+const SAFE = { top: 60, bottom: 60, right: 60 };
+const HAND = '"Bradley Hand", "Chalkboard SE", "Ink Free", "Segoe Print", "Comic Neue", cursive';
+const CX = 540;
+
+const ERA_LIST = [
+  [0, 4, () => sceneBooking()], [4, 9, () => scenePickup()], [9, 14, () => sceneConsol()], [14, 18, () => sceneUplift()],
+  [18, 23, () => sceneClimb()], [23, 28, () => sceneCruise()], [28, 31, () => sceneNight()], [31, 33, () => sceneTouchdown()],
+  [33, 39, () => sceneLastMile()], [39, 45, () => scenePOD()],
+];
+const SHOTS = [
+  ['booking', 0, 0, 4, 'dawn at the shipper: the booking prints, the carton waits'],
+  ['pickup', 1, 4, 9, 'the truck under the power lines'],
+  ['consol', 2, 9, 14, 'built into a ULD at the hub'],
+  ['uplift', 3, 14, 18, 'night ramp: the ULD rides the loader into the belly'],
+  ['climb', 4, 18, 23, 'the climb through cumulus'],
+  ['cruise', 5, 23, 28, 'above the cloud sea, sunrise'],
+  ['night', 6, 28, 31, 'silence: the route over the night earth'],
+  ['touchdown', 7, 31, 33, 'wheels down: the loudest hit'],
+  ['lastmile', 8, 33, 39, 'the van down a street of houses'],
+  ['pod', 9, 39, 45, 'the doorstep at dusk: signed for'],
+];
+const TIMELINE = {
+  width: W, height: H, fps: FPS, bpm: BPM, duration: DURATION, frames: NFRAMES, loop: LOOP_T, safe: SAFE,
+  format: 'morph-chain',
+  shots: SHOTS.map(([key, era, t0, t1, title], i) => ({ id: i + 1, key, era, t0, t1, title })),
+  cuts: [31],
+  morphs: [4, 9, 14, 18, 23, 28, 33, 39],
+  cues: {},
+  acts: [
+    { name: 'Origin', role: 'build', t0: 0, t1: 14 },
+    { name: 'Main leg', role: 'journey', t0: 14, t1: 23 },
+    { name: 'Peak', role: 'peak', t0: 23, t1: 28 },
+    { name: 'Night', role: 'silence', t0: 28, t1: 31 },
+    { name: 'Touchdown', role: 'gift', t0: 31, t1: 33 },
+    { name: 'Destination', role: 'goodbye', t0: 33, t1: 45 },
+  ],
+  board: [
+    { t: 2.5, title: 'Booking', sound: 'one soft pluck, a printer chirp', next: 'the booking slip shrinks into the truck box' },
+    { t: 7.0, title: 'Pickup', sound: 'a low pad, wires hum', next: 'the truck box becomes the ULD' },
+    { t: 12.0, title: 'Consol', sound: 'plucks on 8ths as cartons stack', next: 'the ULD rides into the plane belly' },
+    { t: 16.5, title: 'Uplift', sound: 'engine drone rises', next: 'the belly door becomes a cloud' },
+    { t: 21.0, title: 'Climb', sound: 'riser, the groove starts', next: 'cloud into the cloud sea' },
+    { t: 26.0, title: 'Main leg', sound: 'fullest groove, gold chimes', next: 'the sun becomes the night earth' },
+    { t: 30.0, title: '(silence)', sound: 'near silence, room tone', next: 'hard cut on the hit' },
+    { t: 32.0, title: 'Arrival', sound: 'LOUDEST: chord stab + sub', next: 'the wheel becomes the van wheel' },
+    { t: 36.5, title: 'Last mile', sound: 'warm pad, a bicycle bell', next: 'the van door becomes the front door' },
+    { t: 43.0, title: 'POD', sound: 'a flat chord, decays', next: 'loops to dawn' },
+  ],
+  narration: [],
+};
+window.TIMELINE = TIMELINE;

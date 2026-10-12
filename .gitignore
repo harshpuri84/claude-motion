@@ -1,0 +1,7 @@
+references/
+pieces/*/storyboard-p*.png
+pieces/*/frames/
+pieces/*/renders/
+pieces/*/review/
+node_modules/
+.DS_Store

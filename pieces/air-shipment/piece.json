@@ -1,0 +1,8 @@
+{
+  "name": "air-shipment",
+  "title": "One air shipment",
+  "format": { "width": 1080, "height": 1350, "fps": 24, "bpm": 120, "duration": 45.0, "frames": 1080 },
+  "storyFormat": "morph chain (F2 across 10 worlds, one carried hero)",
+  "style": "ballpoint",
+  "review": { "safe": { "top": 60, "bottom": 60, "right": 60 }, "refs": {} }
+}
