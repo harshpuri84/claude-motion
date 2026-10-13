@@ -18,6 +18,6 @@ const BRIDGES = [
   { tc: 18, A: () => ({ P: uldPts(560, 690, 260), c: '#c8cce0' }), B: () => ({ P: ellipsePts(160, 1090, 280, 170, 0, 64), c: '#ece6d3' }) }, // the ULD -> a cloud
   { tc: 23, A: () => ({ P: ellipsePts(980, 930, 250, 150, 0, 64), c: '#ece6d3' }), B: () => ({ P: ellipsePts(600, 1230, 300, 140, 0, 64), c: '#f3d9c4' }) }, // cloud -> the cloud sea
   { tc: 28, A: () => ({ P: ellipsePts(600, 975, 200, 200, 0, 64), c: '#f2c84b' }), B: () => ({ P: ellipsePts(190, 1010, 200, 200, 0, 64), c: '#ef8f3c' }) }, // the sun -> the origin glow
-  { tc: 33, A: () => ({ P: ellipsePts(580, 830, 200, 200, 0, 64), c: '#1b2358' }), B: () => ({ P: vanPts(260), c: '#f6f1e2' }) },          // the x-ray window -> the van
+  { tc: 33, A: () => ({ P: ellipsePts(605, 931, 200, 200, 0, 64), c: '#1b2358' }), B: () => ({ P: vanPts(260), c: '#f6f1e2' }) },          // the x-ray window -> the van
   { tc: 39, A: () => ({ P: vanPts(680), c: '#f6f1e2' }), B: () => ({ P: bpRect(570, 720, 200, 200), c: '#ffd98a' }) },                       // the van -> the lit front door
 ];

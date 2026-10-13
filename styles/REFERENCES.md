@@ -1,6 +1,6 @@
 # Style references
 
-Looks to borrow from when you start a new piece. Every entry is a post by [Kevin Ngo](https://x.com/kevin_t_ngo). Each one notes what the look does, what kind of piece it fits, and how to get it from this repo's canvas setup.
+Looks to borrow from when you start a new piece. Entries 1 to 9 are posts by [Kevin Ngo](https://x.com/kevin_t_ngo). Entry 10 is a post by [Ole Lehmann](https://x.com/itsolelehmann). Each one notes what the look does, what kind of piece it fits, and how to get it from this repo's canvas setup.
 
 The notes come from watching the posts in a browser. Posts 2 and 9 played their animation, and the notes describe the motion that was visible. For the other videos only the opening frame was seen, and the image posts are stills, so their motion notes are suggestions, not descriptions.
 
@@ -19,6 +19,7 @@ To ask for one, name it in your prompt. For example: "Use the animate skill. Loo
 | 7 | [Real terminal as the set](#7-real-terminal-as-the-set) | Product stories, how a tool helped someone | Talky |
 | 8 | [Coloured-pencil board game](#8-coloured-pencil-board-game) | Strategy, us vs them, turn-based processes | Playful |
 | 9 | [Crayon still life with music](#9-crayon-still-life-with-music) | Loops, mood pieces, social cut-downs | Gentle |
+| 10 | [Mascot bookends, science montage](#10-mascot-bookends-science-montage) | Use-case lists, "10 things" reels, capability showcases | Fast |
 
 ---
 
@@ -102,3 +103,13 @@ To ask for one, name it in your prompt. For example: "Use the animate skill. Loo
 - **Motion seen:** the cat leaves the frame and the mascot rises behind the stand, squashing slightly with its eyes changing shape. The camera stays locked, so all the life comes from the characters and the music.
 - **Fits:** loops, mood pieces, social cut-downs, or a "thank you" or end card with a score under it.
 - **In this repo:** lock the frame and put the motion in two or three small actors with squash and stretch. Use a lamp glow as a radial gradient behind crayon `bpStrokes`. Sync the small moves to the notes in `score.js`.
+
+## 10. Mascot bookends, science montage
+
+[Post](https://x.com/itsolelehmann/status/2102746929184788953): "i'm convinced it's the first model that's finally solved animation." The post lists 10 animation use-cases. The video is 32s at 1920x1080.
+
+- **What it looks like:** two worlds. The bookends are a small orange block creature with two eyes and four stubby legs, on warm grey paper (`#e7e6de`) with faint fibres and one pencil ground line. Its body is orange (`#d87656`) with crosshatched pencil shading and a thick dark outline. The middle is a run of about 14 science vignettes on deep navy (`#15133b` to `#1b1847`, near black `#06051a` in space). The vignettes are a firing neuron, a prism splitting light, a DNA helix, a phyllotaxis spiral, a sunflower, a starling murmuration on a purple-to-peach sky, a galaxy, a black hole, concentric rings, a light beam, an eclipse arc, an earthrise over the moon and a fractal. Each one is a flat cartoon fill with a sketchy outline, and soft glows mark the light sources.
+- **Motion seen:** the creature walks in from the left, stops on the line and looks at the camera. Then it hard cuts into the montage, roughly one vignette every 1.5 to 2 seconds, each with one move of its own: the neuron fires, the flock swirls, the rings pulse. The loudest moment is at about 21.4s, inside the montage. It ends back on the creature on paper with its eyes now happy arcs, so the end is the start, changed.
+- **Fits:** a "10 use-cases" or "what this can do" reel, a capability showcase for a product, or a list post where each item gets one picture. In freight this could be "8 things a booking email tells a forwarder", one vignette per field.
+- **In this repo:** this is the skill's F3 catalogue format (call, then catalogue, then return). Cut on the 120 BPM grid with one vignette per bar, and keep one hero for the bookends. Use our own hero, such as the red-band carton from `air-shipment`, not the creature from this video. The navy vignettes can reuse `bpStars`, `bpRays` and `bpGlobe` from `ballpoint`. The paper bookends need a flat grey base with sparse fibre marks instead of dense `bpStrokes`.
+

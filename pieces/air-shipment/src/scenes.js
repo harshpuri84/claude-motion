@@ -231,23 +231,35 @@ function sceneNight() {
 }
 
 function sceneTouchdown() {
-  // the landing: a dusk runway in perspective, the freighter flaring, mains touching with smoke
-  bpSky([[0, '#283888'], [380, '#5b5fae'], [620, '#e07a6a'], [760, '#ef8f3c'], [820, '#f2c84b']], { key: 'td' });
-  bpSun(860, 800, 80, 'sunT', { c0: '#fff1c2', c1: '#ef8f3c', halo: 3 });
-  bpCloud(200, 300, 120, 'cT1', { warm: BP.peach, body: '#f3d9c4' }); bpCloud(880, 220, 90, 'cT2', { warm: BP.peach, body: '#f3d9c4' });
-  bpStrokes(-20, 820, W + 20, H + 20, [[820, '#3a3f63'], [1350, '#151a48']], { key: 'grass', per: 70 });
-  // runway: a trapezoid to the horizon, centreline dashes and edge lights rushing past
-  const rw = resample([[470, 820], [610, 820], [1300, H + 20], [-220, H + 20]], true, 30);
-  bpFill(rw, [[820, '#6b6f97'], [1350, '#2b3270']], { key: 'rwy', lw: 2, len: [60, 240] });
-  for (let k = 0; k < 9; k++) {
-    const u = mod(k / 9 + (TT - 31) * 0.6, 1), z = u * u, y = 822 + z * 540, hw = 70 + z * 690;
-    ctx.fillStyle = BP.creamW; ctx.fillRect(540 - 3 - z * 6, y, 6 + z * 12, 6 + z * 26);
-    for (const s of [-1, 1]) { const g = ctx.createRadialGradient(540 + s * hw, y, 0, 540 + s * hw, y, 6 + z * 30); g.addColorStop(0, 'rgba(255,230,160,1)'); g.addColorStop(1, 'rgba(255,190,90,0)'); ctx.fillStyle = g; ctx.fillRect(540 + s * hw - 40, y - 40, 80, 80); }
-  }
-  // the freighter, nose up in the flare, gear down; smoke where the mains meet the runway
-  const L = 980, px = 540, py = 860;
-  for (let k = 0; k < 6; k++) bpCloud(px - 140 - k * 70 - (TT - 31) * 90, py + 170 - k * 6, 40 + k * 16, 'smoke' + k, { n: 4, tall: 0.5, body: '#f6f1e2', shade: '#b8bfe0' });
-  bpPlane(px, py, L, -0.09, 'land', { lights: true, gear: 120 });
-  bpXray(px + 40, py - 30, 52, 'xT', 5);
+  // side-on landing: the runway runs across the frame. Mains touch at 31.0, the nose comes down by 32.6, the ground rushes left
+  const u = TT - 31, GY = 1090;                                   // GY: the runway surface the tyres touch
+  bpSky([[0, '#283888'], [380, '#5b5fae'], [620, '#e07a6a'], [740, '#ef8f3c'], [790, '#f2c84b']], { key: 'td' });
+  bpSun(900, 760, 70, 'sunT', { c0: '#fff1c2', c1: '#ef8f3c', halo: 3 });
+  bpCloud(200, 300, 120, 'cT1', { warm: BP.peach, body: '#f3d9c4' }); bpCloud(860, 220, 90, 'cT2', { warm: BP.peach, body: '#f3d9c4' });
+  // the far side of the airfield: terminal and tower silhouettes, slow parallax
+  const far = -u * 40;
+  bpFill(bpRect(far - 40, 700, 520, 90), [[700, '#2b3270'], [790, '#1b2358']], { key: 'term', lw: 1.6 });
+  for (let k = 0; k < 8; k++) { ctx.fillStyle = '#ffcf6a'; ctx.fillRect(far + k * 60, 730, 26, 14); }
+  bpFill(bpRect(far + 620, 560, 40, 230), [[560, '#2b3270'], [790, '#1b2358']], { key: 'tower', lw: 1.6 });
+  bpFill(resample([[far + 590, 560], [far + 690, 560], [far + 675, 510], [far + 605, 510]], true, 10), [[510, '#3a4aa0'], [560, '#1b2358']], { key: 'cab', lw: 1.6 });
+  // grass, runway, foreground grass
+  bpStrokes(-20, 785, W + 20, 1000, [[785, '#3a3f63'], [1000, '#2b3270']], { key: 'grassF', per: 70, len: [120, 400] });
+  bpStrokes(-20, 1000, W + 20, 1180, [[1000, '#6b6f97'], [1180, '#3a3f63']], { key: 'rwy', per: 50, len: [160, 420] });
+  bpStrokes(-20, 1180, W + 20, H + 20, [[1180, '#2b3270'], [1350, '#151a48']], { key: 'grassN', per: 60, len: [160, 420] });
+  for (const y of [1004, 1176]) bpLine([[-20, y], [W + 20, y]], { w: 3, c: '#e4e7f2', key: 'edge' + y });
+  for (let k = 0; k < 6; k++) { const x = mod(k * 260 - u * 1500, W + 260) - 130; ctx.fillStyle = BP.creamW; ctx.fillRect(x, GY - 4, 130, 8); }
+  for (let k = 0; k < 9; k++) for (const y of [1000, 1180]) { const x = mod(k * 150 - u * 1500, W + 150) - 75, g = ctx.createRadialGradient(x, y, 0, x, y, 22); g.addColorStop(0, 'rgba(255,230,160,1)'); g.addColorStop(1, 'rgba(255,190,90,0)'); ctx.fillStyle = g; ctx.fillRect(x - 22, y - 22, 44, 44); }
+  // the freighter: the pitch eases from nose-up to level, the main wheels stay on the runway
+  const L = 900, h = L * 0.11, gear = 90, ly = h * 0.5 + gear + h * 0.2, mx = -L * 0.08;
+  const r = -0.07 * (1 - EZ.io(seg(TT, 31.2, 32.6))), px = 560;
+  const py = GY - (Math.sin(r) * mx + Math.cos(r) * ly);
+  const W2 = (lx, lyy) => [px + Math.cos(r) * lx - Math.sin(r) * lyy, py + Math.sin(r) * lx + Math.cos(r) * lyy];
+  // tyre smoke: puffs from the mains on contact, the nose wheel when it comes down
+  const [mwx] = W2(mx, ly), [nwx] = W2(L * 0.3, ly);
+  for (let k = 0; k < 7; k++) { const age = u - k * 0.06; if (age < 0) continue; bpCloud(mwx - 20 - age * 520, GY - 10 - age * 30, 26 + age * 70, 'smk' + k, { n: 4, tall: 0.5, body: '#f6f1e2', shade: '#b8bfe0' }); }
+  for (let k = 0; k < 4; k++) { const age = TT - 32.6 - k * 0.06; if (age < 0) continue; bpCloud(nwx - 20 - age * 520, GY - 10 - age * 20, 18 + age * 40, 'smkN' + k, { n: 4, tall: 0.5, body: '#f6f1e2', shade: '#b8bfe0' }); }
+  bpPlane(px, py, L, r, 'land', { lights: true, gear });
+  const [xx, xy] = W2(L * 0.05, 0);
+  bpXray(xx, xy, 52, 'xT', 5);
   bpTag('06', 'Arrival');
 }
