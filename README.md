@@ -7,6 +7,7 @@ Videos where every frame is JavaScript. Claude writes code that draws each penci
 The engine is the [animate](https://github.com/cth9191/animate) skill for Claude Code by cth9191 (MIT). This repo adds two things on top of it.
 
 - `styles/ballpoint/` is a drawing style. Dense horizontal pencil strokes, cream cumulus with lavender shading, thin dark lines for structures, gold light. The look is inspired by [Kevin Ngo's](https://x.com/kevin_t_ngo) Canon in D video.
+- `styles/REFERENCES.md` lists nine more looks from Kevin Ngo's posts, each with what kind of piece it suits and how to build it here. Name one in your prompt to use it.
 - `pieces/air-shipment/` is a 45s, 4:5 piece. One air shipment goes from booking to POD. A carton with a red band collects a stamp at every hand-off. Red marks the shipment and nothing else.
 
 ## Make your own
