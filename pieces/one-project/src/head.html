@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>One project, many threads</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #1b1714; overflow: hidden; }
+  body { display: flex; align-items: center; justify-content: center; }
+  canvas { width: min(100vw, calc(100vh * 16 / 9)); height: auto; aspect-ratio: 16 / 9; display: block; cursor: pointer; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1920" height="1080"></canvas>
+<script>
+"use strict";
+// =====================================================================
+//  ONE PROJECT, MANY THREADS — 16:9, 60s @ 120 BPM, 24fps, narrated (voice sets the clock once voice.json exists).
+//  Paper worlds (diagonal stripes, the hero) cut hard to navy blueprint worlds (the mechanism), as in the reference.
+// =====================================================================
+const FPS = 24, W = 1920, H = 1080;
+const BPM = 120, BEAT = 60 / BPM, E8 = BEAT / 2, E16 = BEAT / 4;
+const VL = (id) => VOICE.lines.find((l) => l.id === id);
+const VW = (id, word, n = 1) => { const ws = VL(id).words.filter((w) => w.w.toLowerCase().replace(/[^a-z0-9']/g, '') === word.toLowerCase()); return (ws[n - 1] || ws[0] || { t0: VL(id).t0 }).t0; };
+const DURATION = VOICE.duration;
+const NFRAMES = Math.round(DURATION * FPS);
+const LOOP_T = NFRAMES / FPS;
+const SAFE = { top: 60, bottom: 60, right: 60 };
+const HAND = '"Ink Free", "Segoe Print", "Bradley Hand", "Chalkboard SE", "Comic Sans MS", "Comic Neue", cursive';
+const CX = W / 2;
+
+// beats start 0.3s after the previous line ends (the voice is the clock)
+const BEATS_T = { open: 0 };
+const SNAP8 = (t) => Math.ceil(t / E8 - 1e-6) * E8;   // cuts land on the 8th-note grid, at least 0.2s after the line ends
+['main', 'detect', 'thread', 'builds', 'curry', 'verdict'].forEach((id, i, a) => { BEATS_T[id] = SNAP8(VL(['open', ...a][i]).t1 + 0.2); });
+BEATS_T.end = SNAP8(VL('verdict').t1 + 0.2);
+const ERA_LIST = [
+  [BEATS_T.open, BEATS_T.main, () => sceneOpen()],
+  [BEATS_T.main, BEATS_T.detect, () => sceneMain()],
+  [BEATS_T.detect, BEATS_T.thread, () => sceneDetect()],
+  [BEATS_T.thread, BEATS_T.builds, () => sceneThread()],
+  [BEATS_T.builds, BEATS_T.curry, () => sceneBuilds()],
+  [BEATS_T.curry, BEATS_T.verdict, () => sceneCurry()],
+  [BEATS_T.verdict, BEATS_T.end, () => sceneVerdict()],
+  [BEATS_T.end, DURATION, () => sceneEnd()],
+];
+const NAMES = ['open', 'main', 'detect', 'thread', 'builds', 'curry', 'verdict', 'end'];
+const SHOTS = ERA_LIST.map(([t0, t1], i) => [NAMES[i], i, t0, t1, NAMES[i]]);
+const TIMELINE = {
+  width: W, height: H, fps: FPS, bpm: BPM, duration: DURATION, frames: NFRAMES, loop: LOOP_T, safe: SAFE,
+  format: 'catalogue',
+  shots: SHOTS.map(([key, era, t0, t1, title], i) => ({ id: i + 1, key, era, t0, t1, title })),
+  cuts: ERA_LIST.slice(1).map(([t0]) => t0),
+  morphs: [],
+  cues: {},
+  acts: [
+    { name: '1 Setup', role: 'build', t0: 0, t1: BEATS_T.thread },
+    { name: '2 Mechanism', role: 'journey', t0: BEATS_T.thread, t1: BEATS_T.curry },
+    { name: '3 Payoff', role: 'peak', t0: BEATS_T.curry, t1: BEATS_T.verdict },
+    { name: '4 Verdict', role: 'gift', t0: BEATS_T.verdict, t1: DURATION },
+  ],
+  board: [
+    { t: BEATS_T.main - 0.5, title: '1 one project', sound: 'soft pad in', next: 'hard cut to blueprint' },
+    { t: BEATS_T.detect - 0.5, title: '2 main chat, three threads', sound: 'three soft plucks as threads land', next: 'cut to paper' },
+    { t: BEATS_T.thread - 0.6, title: '3 pick up recent work', sound: 'a click, paper flicks, a click', next: 'threads leave right; cut' },
+    { t: BEATS_T.builds - 0.5, title: '4 own session = subagents = Cowork', sound: 'typing blips', next: 'cut to paper' },
+    { t: BEATS_T.curry - 0.5, title: '5 what came out', sound: 'a pluck per card', next: 'cut' },
+    { t: BEATS_T.verdict - 0.6, title: '6 the curry studio', sound: '3 paper whooshes, then silence', next: 'the hit in the pause' },
+    { t: BEATS_T.end - 0.4, title: '7 where each one fits', sound: 'the loudest chord at the cut', next: 'cut to end card' },
+    { t: DURATION - 0.3, title: '8 end card', sound: 'pad tail', next: 'end' },
+  ],
+  narration: VOICE.lines.map((l) => ({ id: l.id, t0: l.t0, t1: l.t1, text: l.text.replace(/Clawd/g, 'Claude') })),
+};
+window.TIMELINE = TIMELINE;

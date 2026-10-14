@@ -1,0 +1,26 @@
+{
+  "name": "one-project",
+  "title": "One project, many threads",
+  "format": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 24,
+    "bpm": 120,
+    "duration": 62.624,
+    "frames": 1503
+  },
+  "storyFormat": "catalogue (F3) with a verdict, hard cuts between paper and blueprint worlds",
+  "style": "paperprint",
+  "review": {
+    "safe": {
+      "top": 60,
+      "bottom": 60,
+      "right": 60
+    },
+    "refs": {}
+  },
+  "voice": {
+    "file": "voice/voice.wav",
+    "music": -12
+  }
+}
