@@ -1,0 +1,51 @@
+{
+ "lead": 1.0,
+ "tail": 3.0,
+ "voice_id": "QTrMV1c7DRg2cxmcqmDX",
+ "model": "eleven_v4",
+ "lines": [
+  {
+   "id": "open",
+   "text": "Clawd gave me a hundred dollars of credit, so I spent a few days in the new Projects.",
+   "after": 0.5,
+   "file": "open.mp3"
+  },
+  {
+   "id": "main",
+   "text": "A project has one main chat. It plans the work and hands each piece to its own thread.",
+   "after": 0.6,
+   "file": "main.mp3"
+  },
+  {
+   "id": "detect",
+   "text": "The part I liked most: one click on pick up recent work. It read my last fourteen sessions and came back with three threads, ready to start.",
+   "after": 0.6,
+   "file": "detect.mp3"
+  },
+  {
+   "id": "thread",
+   "text": "Each thread is its own session. If you've used subagents or Cowork, it's the same idea, with a cleaner window around it.",
+   "after": 0.6,
+   "file": "thread.mp3"
+  },
+  {
+   "id": "builds",
+   "text": "Over a few days it built a KPI cockpit prototype, a hand-drawn video engine, an AI presentation, and a quoting tool.",
+   "after": 0.7,
+   "file": "builds.mp3"
+  },
+  {
+   "id": "curry",
+   "text": "The one that stuck was for my wife. The Curry Studio now gets a quote, an invoice and a client email from one message.",
+   "after": 1.4,
+   "file": "curry.mp3"
+  },
+  {
+   "id": "verdict",
+   "text": "It's the smoothest Clawd has felt. For a small business, this is the tool. For my own work, I'm staying in Clawd Code.",
+   "after": 0.0,
+   "file": "verdict.mp3"
+  }
+ ],
+ "notes": "Spoken text spells Claude as 'Clawd' (pronounced klawd, like 'clawed'). On-screen text keeps 'Claude'. Model: eleven_v4."
+}
