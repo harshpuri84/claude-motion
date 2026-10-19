@@ -1,0 +1,1635 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Projects, second look</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #1b1714; overflow: hidden; }
+  body { display: flex; align-items: center; justify-content: center; }
+  canvas { width: min(100vw, calc(100vh * 16 / 9)); height: auto; aspect-ratio: 16 / 9; display: block; cursor: pointer; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1920" height="1080"></canvas>
+<script>
+"use strict";
+// ---- voice.json (tools/voice.mjs): the voice-over's lines and word times
+const VOICE = {"duration":96.481,"lead":0.5,"tail":2,"lines":[{"id":"hook","text":"I thought Projects was Cowork for non-technical people. I was wrong. It is much more powerful.","t0":0.5,"t1":7.137,"words":[{"w":"I","t0":0.5,"t1":0.62,"est":true},{"w":"thought","t0":0.62,"t1":0.86},{"w":"Projects","t0":0.86,"t1":1.38},{"w":"was","t0":1.38,"t1":1.72},{"w":"Cowork","t0":1.72,"t1":2.3,"est":true},{"w":"for","t0":2.3,"t1":2.5},{"w":"non-technical","t0":2.5,"t1":3.06,"est":true},{"w":"people.","t0":3.06,"t1":3.6},{"w":"I","t0":4.08,"t1":4.36},{"w":"was","t0":4.36,"t1":4.5},{"w":"wrong.","t0":4.5,"t1":4.88},{"w":"It","t0":5.4,"t1":5.58},{"w":"is","t0":5.58,"t1":5.78},{"w":"much","t0":5.78,"t1":6.16},{"w":"more","t0":6.16,"t1":6.48},{"w":"powerful.","t0":6.48,"t1":6.98}]},{"id":"harness","text":"Since then I used it to build my whole Clawd harness: skills, rules and hooks, all inside one project, a team OS.","t0":7.537,"t1":16.372,"words":[{"w":"Since","t0":7.56,"t1":7.74},{"w":"then","t0":7.74,"t1":8.08},{"w":"I","t0":8.24,"t1":8.5},{"w":"used","t0":8.5,"t1":8.74},{"w":"it","t0":8.74,"t1":8.92},{"w":"to","t0":8.92,"t1":9.04},{"w":"build","t0":9.04,"t1":9.22},{"w":"my","t0":9.22,"t1":9.44},{"w":"whole","t0":9.44,"t1":9.86},{"w":"Clawd","t0":9.86,"t1":10.16,"est":true},{"w":"harness:","t0":10.16,"t1":10.6},{"w":"skills,","t0":11.24,"t1":11.54},{"w":"rules","t0":11.9,"t1":12.22},{"w":"and","t0":12.44,"t1":12.64},{"w":"hooks,","t0":12.64,"t1":13.02},{"w":"all","t0":13.02,"t1":13.54},{"w":"inside","t0":13.54,"t1":13.92},{"w":"one","t0":13.92,"t1":14.3},{"w":"project,","t0":14.3,"t1":14.78},{"w":"a","t0":15.22,"t1":15.36},{"w":"team","t0":15.36,"t1":15.68},{"w":"OS.","t0":15.68,"t1":16.04}]},{"id":"split","text":"I gave the main chat one goal. It split the work into threads and ran them in parallel.","t0":16.772,"t1":22.401,"words":[{"w":"I","t0":16.76,"t1":16.88},{"w":"gave","t0":16.88,"t1":17.06},{"w":"the","t0":17.06,"t1":17.26},{"w":"main","t0":17.26,"t1":17.5},{"w":"chat","t0":17.5,"t1":17.8},{"w":"one","t0":17.8,"t1":18.26},{"w":"goal.","t0":18.26,"t1":18.6},{"w":"It","t0":19.14,"t1":19.34},{"w":"split","t0":19.34,"t1":19.62},{"w":"the","t0":19.62,"t1":19.8},{"w":"work","t0":19.8,"t1":20.02},{"w":"into","t0":20.02,"t1":20.32},{"w":"threads","t0":20.32,"t1":20.7},{"w":"and","t0":20.7,"t1":21.1},{"w":"ran","t0":21.1,"t1":21.38},{"w":"them","t0":21.38,"t1":21.6},{"w":"in","t0":21.6,"t1":21.8},{"w":"parallel.","t0":21.8,"t1":22.22}]},{"id":"session","text":"Here is what I missed. Every thread is a full session, on its own branch, in the cloud. Close the laptop and a cloud thread keeps going, and you can check in from your phone. Need your local files? Ask, and it runs on your machine.","t0":22.801,"t1":37.167,"words":[{"w":"Here","t0":22.8,"t1":22.98},{"w":"is","t0":22.98,"t1":23.16},{"w":"what","t0":23.16,"t1":23.32},{"w":"I","t0":23.32,"t1":23.46},{"w":"missed.","t0":23.46,"t1":23.74},{"w":"Every","t0":24.48,"t1":24.72},{"w":"thread","t0":24.72,"t1":25.16},{"w":"is","t0":25.16,"t1":25.44},{"w":"a","t0":25.44,"t1":25.56},{"w":"full","t0":25.56,"t1":25.88},{"w":"session,","t0":25.88,"t1":26.36},{"w":"on","t0":26.36,"t1":26.84},{"w":"its","t0":26.84,"t1":27},{"w":"own","t0":27,"t1":27.3},{"w":"branch,","t0":27.3,"t1":27.72},{"w":"in","t0":27.72,"t1":28.1},{"w":"the","t0":28.1,"t1":28.24},{"w":"cloud.","t0":28.24,"t1":28.54},{"w":"Close","t0":29.04,"t1":29.34},{"w":"the","t0":29.34,"t1":29.52},{"w":"laptop","t0":29.52,"t1":29.88},{"w":"and","t0":29.88,"t1":30.24},{"w":"a","t0":30.24,"t1":30.36},{"w":"cloud","t0":30.36,"t1":30.64},{"w":"thread","t0":30.64,"t1":30.96},{"w":"keeps","t0":30.96,"t1":31.26},{"w":"going,","t0":31.26,"t1":31.74},{"w":"and","t0":32.04,"t1":32.2},{"w":"you","t0":32.2,"t1":32.32},{"w":"can","t0":32.32,"t1":32.44},{"w":"check","t0":32.44,"t1":32.62},{"w":"in","t0":32.62,"t1":32.84},{"w":"from","t0":32.84,"t1":33.02},{"w":"your","t0":33.02,"t1":33.2},{"w":"phone.","t0":33.2,"t1":33.46},{"w":"Need","t0":33.96,"t1":34.16},{"w":"your","t0":34.16,"t1":34.32},{"w":"local","t0":34.32,"t1":34.56},{"w":"files?","t0":34.56,"t1":34.98},{"w":"Ask,","t0":35.38,"t1":35.66},{"w":"and","t0":35.98,"t1":36.08},{"w":"it","t0":36.08,"t1":36.2},{"w":"runs","t0":36.2,"t1":36.38},{"w":"on","t0":36.38,"t1":36.6},{"w":"your","t0":36.6,"t1":36.74},{"w":"machine.","t0":36.74,"t1":37.06}]},{"id":"pr","text":"A thread opens its own pull request, then watches it. When CI fails, it pushes the fix, and it answers review comments. I raised several PRs this way without leaving the project.","t0":37.567,"t1":49.744,"words":[{"w":"A","t0":37.54,"t1":37.68},{"w":"thread","t0":37.68,"t1":37.96},{"w":"opens","t0":37.96,"t1":38.38},{"w":"its","t0":38.38,"t1":38.6},{"w":"own","t0":38.6,"t1":38.88},{"w":"pull","t0":38.88,"t1":39.18},{"w":"request,","t0":39.18,"t1":39.6},{"w":"then","t0":39.92,"t1":40.16},{"w":"watches","t0":40.16,"t1":40.5},{"w":"it.","t0":40.5,"t1":40.9},{"w":"When","t0":41.3,"t1":41.5},{"w":"CI","t0":41.5,"t1":41.82},{"w":"fails,","t0":41.82,"t1":42.3},{"w":"it","t0":42.62,"t1":42.86},{"w":"pushes","t0":42.86,"t1":43.18},{"w":"the","t0":43.18,"t1":43.44},{"w":"fix,","t0":43.44,"t1":43.68},{"w":"and","t0":43.68,"t1":44.24},{"w":"it","t0":44.24,"t1":44.46},{"w":"answers","t0":44.46,"t1":44.86},{"w":"review","t0":44.86,"t1":45.2},{"w":"comments.","t0":45.2,"t1":45.66},{"w":"I","t0":46.22,"t1":46.44},{"w":"raised","t0":46.44,"t1":46.7},{"w":"several","t0":46.7,"t1":47.22},{"w":"PRs","t0":47.22,"t1":47.78},{"w":"this","t0":47.78,"t1":47.9},{"w":"way","t0":47.9,"t1":48.18},{"w":"without","t0":48.18,"t1":48.64},{"w":"leaving","t0":48.64,"t1":49},{"w":"the","t0":49,"t1":49.22},{"w":"project.","t0":49.22,"t1":49.6}]},{"id":"library","text":"The library holds the files you add and the files threads produce. And a daily routine can open a new thread when it finds a regression.","t0":50.144,"t1":58.765,"words":[{"w":"The","t0":50.04,"t1":50.3},{"w":"library","t0":50.3,"t1":50.54},{"w":"holds","t0":50.54,"t1":51.06},{"w":"the","t0":51.06,"t1":51.28},{"w":"files","t0":51.28,"t1":51.62},{"w":"you","t0":51.62,"t1":51.84},{"w":"add","t0":51.84,"t1":52.22},{"w":"and","t0":52.22,"t1":52.58},{"w":"the","t0":52.58,"t1":52.72},{"w":"files","t0":52.72,"t1":53.04},{"w":"threads","t0":53.04,"t1":53.46},{"w":"produce.","t0":53.46,"t1":53.98},{"w":"And","t0":53.98,"t1":54.88},{"w":"a","t0":54.88,"t1":55.02},{"w":"daily","t0":55.02,"t1":55.32},{"w":"routine","t0":55.32,"t1":55.8},{"w":"can","t0":55.8,"t1":56.12},{"w":"open","t0":56.12,"t1":56.46},{"w":"a","t0":56.46,"t1":56.66},{"w":"new","t0":56.66,"t1":56.92},{"w":"thread","t0":56.92,"t1":57.2},{"w":"when","t0":57.2,"t1":57.5},{"w":"it","t0":57.5,"t1":57.66},{"w":"finds","t0":57.66,"t1":57.94},{"w":"a","t0":57.94,"t1":58.12},{"w":"regression.","t0":58.12,"t1":58.56}]},{"id":"tips","text":"Now, three tips from the Clawd Code team for managing the coordinator.","t0":59.165,"t1":63.309,"words":[{"w":"Now,","t0":59.4,"t1":59.42},{"w":"three","t0":59.76,"t1":60.06},{"w":"tips","t0":60.06,"t1":60.34},{"w":"from","t0":60.34,"t1":60.62},{"w":"the","t0":60.62,"t1":60.88},{"w":"Clawd","t0":60.88,"t1":60.98,"est":true},{"w":"Code","t0":60.98,"t1":61.22},{"w":"team","t0":61.22,"t1":61.6},{"w":"for","t0":61.6,"t1":61.9},{"w":"managing","t0":61.9,"t1":62.26},{"w":"the","t0":62.26,"t1":62.54},{"w":"coordinator.","t0":62.54,"t1":63.06}]},{"id":"t1","text":"One. Every thread uses your plan's limits. Leave the coordinator on low effort, and use a smaller model for the threads.","t0":63.709,"t1":71.845,"words":[{"w":"One.","t0":63.92,"t1":63.96},{"w":"Every","t0":64.62,"t1":64.94},{"w":"thread","t0":64.94,"t1":65.34},{"w":"uses","t0":65.34,"t1":65.8},{"w":"your","t0":65.8,"t1":66.08},{"w":"plan's","t0":66.08,"t1":66.56},{"w":"limits.","t0":66.56,"t1":66.9},{"w":"Leave","t0":67.48,"t1":67.68},{"w":"the","t0":67.68,"t1":67.88},{"w":"coordinator","t0":67.88,"t1":68.36},{"w":"on","t0":68.36,"t1":68.72},{"w":"low","t0":68.72,"t1":69},{"w":"effort,","t0":69,"t1":69.4},{"w":"and","t0":69.4,"t1":69.84},{"w":"use","t0":69.84,"t1":70.06},{"w":"a","t0":70.06,"t1":70.28},{"w":"smaller","t0":70.28,"t1":70.64},{"w":"model","t0":70.64,"t1":70.96},{"w":"for","t0":70.96,"t1":71.18},{"w":"the","t0":71.18,"t1":71.34},{"w":"threads.","t0":71.34,"t1":71.64}]},{"id":"t2","text":"Two. Tell it how many threads to run, how often to update you, and to show a plan first.","t0":72.245,"t1":78.808,"words":[{"w":"Two.","t0":72.06,"t1":72.5},{"w":"Tell","t0":73.14,"t1":73.28},{"w":"it","t0":73.28,"t1":73.44},{"w":"how","t0":73.44,"t1":73.78},{"w":"many","t0":73.78,"t1":74.02},{"w":"threads","t0":74.02,"t1":74.32},{"w":"to","t0":74.32,"t1":74.58},{"w":"run,","t0":74.58,"t1":74.84},{"w":"how","t0":75.24,"t1":75.46},{"w":"often","t0":75.46,"t1":75.84},{"w":"to","t0":75.84,"t1":76.02},{"w":"update","t0":76.02,"t1":76.4},{"w":"you,","t0":76.4,"t1":76.74},{"w":"and","t0":76.98,"t1":77.26},{"w":"to","t0":77.26,"t1":77.42},{"w":"show","t0":77.42,"t1":77.66},{"w":"a","t0":77.66,"t1":77.88},{"w":"plan","t0":77.88,"t1":78.18},{"w":"first.","t0":78.18,"t1":78.6}]},{"id":"t3","text":"Three. Threads share memory. Teach it a preference once, and every thread knows.","t0":79.208,"t1":85.187,"words":[{"w":"Three.","t0":79.18,"t1":79.54},{"w":"Threads","t0":80.2,"t1":80.52},{"w":"share","t0":80.52,"t1":80.92},{"w":"memory.","t0":80.92,"t1":81.42},{"w":"Teach","t0":81.92,"t1":82.26},{"w":"it","t0":82.26,"t1":82.42},{"w":"a","t0":82.42,"t1":82.56},{"w":"preference","t0":82.56,"t1":82.92},{"w":"once,","t0":82.92,"t1":83.3},{"w":"and","t0":83.3,"t1":83.9},{"w":"every","t0":83.9,"t1":84.34},{"w":"thread","t0":84.34,"t1":84.64},{"w":"knows.","t0":84.64,"t1":84.98}]},{"id":"close","text":"Projects is in beta for Pro and Max, not Team or Enterprise yet. No clear verdict yet, but I will be using it more often.","t0":85.587,"t1":94.481,"words":[{"w":"Projects","t0":85.7,"t1":85.92},{"w":"is","t0":85.92,"t1":86.28},{"w":"in","t0":86.28,"t1":86.5},{"w":"beta","t0":86.5,"t1":86.74},{"w":"for","t0":86.74,"t1":87.08},{"w":"Pro","t0":87.08,"t1":87.42},{"w":"and","t0":87.42,"t1":87.64},{"w":"Max,","t0":87.64,"t1":88},{"w":"not","t0":88.46,"t1":88.66},{"w":"Team","t0":88.66,"t1":89.06},{"w":"or","t0":89.06,"t1":89.26},{"w":"Enterprise","t0":89.26,"t1":89.7},{"w":"yet.","t0":89.7,"t1":90.08},{"w":"No","t0":90.74,"t1":90.98},{"w":"clear","t0":90.98,"t1":91.22},{"w":"verdict","t0":91.22,"t1":91.58},{"w":"yet,","t0":91.58,"t1":91.96},{"w":"but","t0":92.34,"t1":92.54},{"w":"I","t0":92.54,"t1":92.94},{"w":"will","t0":92.94,"t1":93.18},{"w":"be","t0":93.18,"t1":93.34},{"w":"using","t0":93.34,"t1":93.64},{"w":"it","t0":93.64,"t1":93.82},{"w":"more","t0":93.82,"t1":94.02},{"w":"often.","t0":94.02,"t1":94.36}]}]};
+// =====================================================================
+//  ONE PROJECT, MANY THREADS — 16:9, 60s @ 120 BPM, 24fps, narrated (voice sets the clock once voice.json exists).
+//  Paper worlds (diagonal stripes, the hero) cut hard to navy blueprint worlds (the mechanism), as in the reference.
+// =====================================================================
+const FPS = 24, W = 1920, H = 1080;
+const BPM = 120, BEAT = 60 / BPM, E8 = BEAT / 2, E16 = BEAT / 4;
+const VL = (id) => VOICE.lines.find((l) => l.id === id);
+const VW = (id, word, n = 1) => { const ws = VL(id).words.filter((w) => w.w.toLowerCase().replace(/[^a-z0-9']/g, '') === word.toLowerCase()); return (ws[n - 1] || ws[0] || { t0: VL(id).t0 }).t0; };
+const DURATION = VOICE.duration;
+const NFRAMES = Math.round(DURATION * FPS);
+const LOOP_T = NFRAMES / FPS;
+const SAFE = { top: 60, bottom: 60, right: 60 };
+const HAND = '"Ink Free", "Segoe Print", "Bradley Hand", "Chalkboard SE", "Comic Sans MS", "Comic Neue", cursive';
+const CX = W / 2;
+
+// beats start 0.3s after the previous line ends (the voice is the clock)
+const IDS = ['hook', 'harness', 'split', 'session', 'pr', 'library', 'tips', 't1', 't2', 't3', 'close'];
+const BEATS_T = { hook: 0 };
+const SNAP8 = (t) => Math.ceil(t / E8 - 1e-6) * E8;
+IDS.slice(1).forEach((id, i) => { BEATS_T[id] = SNAP8(VL(IDS[i]).t1 + 0.2); });
+BEATS_T.end = SNAP8(VL('close').t1 + 0.2);
+const FN = [sceneHook, sceneHarness, sceneSplit, sceneSession, scenePR, sceneLibrary, sceneTips, sceneT1, sceneT2, sceneT3, sceneClose];
+const ERA_LIST = IDS.map((id, i) => [BEATS_T[id], i + 1 < IDS.length ? BEATS_T[IDS[i + 1]] : BEATS_T.end, () => FN[i]()]);
+ERA_LIST.push([BEATS_T.end, DURATION, () => sceneEnd()]);
+const NAMES = [...IDS, 'end'];
+const SHOTS = ERA_LIST.map(([t0, t1], i) => [NAMES[i], i, t0, t1, NAMES[i]]);
+const TIMELINE = {
+  width: W, height: H, fps: FPS, bpm: BPM, duration: DURATION, frames: NFRAMES, loop: LOOP_T, safe: SAFE,
+  format: 'catalogue',
+  shots: SHOTS.map(([key, era, t0, t1, title], i) => ({ id: i + 1, key, era, t0, t1, title })),
+  cuts: ERA_LIST.slice(1).map(([t0]) => t0),
+  morphs: [],
+  cues: {},
+  acts: [
+    { name: '1 Hook', role: 'build', t0: 0, t1: BEATS_T.session },
+    { name: '2 Mechanism', role: 'journey', t0: BEATS_T.session, t1: BEATS_T.tips },
+    { name: '3 Tips', role: 'peak', t0: BEATS_T.tips, t1: BEATS_T.close },
+    { name: '4 Verdict', role: 'gift', t0: BEATS_T.close, t1: DURATION },
+  ],
+  board: NAMES.map((k, i) => ({ t: Math.min(ERA_LIST[i][1] - 0.4, ERA_LIST[i][0] + Math.min(0.8 * (ERA_LIST[i][1] - ERA_LIST[i][0]), 8)), title: (i + 1) + ' ' + k, sound: '', next: '' })),
+  narration: VOICE.lines.map((l) => ({ id: l.id, t0: l.t0, t1: l.t1, text: l.text.replace(/Clawd/g, 'Claude') })),
+};
+window.TIMELINE = TIMELINE;
+// =====================================================================
+//  kit/core.js — seeded RNG, math, easing, palette, geometry, the hand-drawn drawing kit
+//  (wobble on the boil, ink, paint, hatch, pencil, stipple, grain), cameras, mono text.
+//  Needs from the piece head: FPS, W, H. Render state: ctx, F (frame), B (boil = floor(F/2)).
+// =====================================================================
+
+// ---------------------------------------------------------------------
+//  seeded RNG
+// ---------------------------------------------------------------------
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+function hash(...xs) {
+  let h = 2166136261 >>> 0;
+  for (const x of xs) {
+    const s = String(x);
+    for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
+    h ^= 124; h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+function RNG(...xs) {
+  const f = mulberry32(hash(...xs));
+  return {
+    f,
+    r: (a, b) => a + (b - a) * f(),
+    n: (amt) => (f() * 2 - 1) * amt,
+    i: (a, b) => a + Math.floor(f() * (b - a + 1)),
+    pick: (arr) => arr[Math.floor(f() * arr.length)],
+  };
+}
+
+// ---------------------------------------------------------------------
+//  math
+// ---------------------------------------------------------------------
+const TAU = Math.PI * 2, DEG = Math.PI / 180;
+const clamp = (x, a = 0, b = 1) => (x < a ? a : x > b ? b : x);
+const lerp = (a, b, t) => a + (b - a) * t;
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+// has absolute time t reached cut time c? (cuts snap to the nearest frame, like shot boundaries)
+const past = (t, c) => Math.round(t * FPS + 1e-6) >= Math.round(c * FPS);
+const dist = (a, b) => Math.hypot(b[0] - a[0], b[1] - a[1]);
+const EZ = {
+  o2: (t) => 1 - (1 - clamp(t)) ** 2,
+  o3: (t) => 1 - (1 - clamp(t)) ** 3,
+  i2: (t) => clamp(t) ** 2,
+  i3: (t) => clamp(t) ** 3,
+  io: (t) => { t = clamp(t); return t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2; },
+  back: (t) => { t = clamp(t) - 1; return 1 + 2.70158 * t * t * t + 1.70158 * t * t; },
+};
+
+// ---------------------------------------------------------------------
+//  render state
+// ---------------------------------------------------------------------
+let ctx = null;   // current 2d context
+let F = 0;        // absolute frame index
+let B = 0;        // boil index — reseeds every 2 frames (Math.floor(t*12))
+
+const C = {
+  ink: '#3a2417', cream: '#efe5cf', paper: '#f4ecd9', paperLine: 'rgba(90,130,190,0.32)',
+  orange: '#e58a4e', orangeD: '#c3622e', orangeL: '#f4b27c', terra: '#d97757',
+  rose: '#d98b8b', roseD: '#b0616a', roseL: '#efb9b0',
+  wood: '#d6a466', woodD: '#a8773f', woodL: '#e9c48f',
+  sky: '#9cc4d6', skyD: '#6f9fb8', skyL: '#c9e1ea',
+  teal: '#3d9f96', tealL: '#86c9be',
+  yellow: '#f0c55a', yellowL: '#f7dd92',
+  green: '#5f9c5c', greenL: '#a3cf92',
+  red: '#d4382c', redL: '#ea7a6c',
+  skin: '#ebb68f', skinD: '#c7815d', skinL: '#f7d4b4',
+  lav: 'rgba(104,112,214,0.7)', lavS: 'rgba(104,112,214,0.42)',
+  navy: '#0c0d1c', navy2: '#15173a', peri: '#c8d0f0', periD: '#7c86c4', periS: 'rgba(150,164,230,0.20)',
+  cyan: '#52d6c4', mag: '#e0368f', glow: '#5de37a', white: '#f4f6ff',
+};
+const RAINBOW = ['#f0d042', '#e050b8', '#46cde0', '#7ad866', '#a47ef0'];
+const MONO = 'Consolas, "Cascadia Mono", Menlo, "DejaVu Sans Mono", "Courier New", monospace';   // Windows first, then macOS / Linux
+
+// ---------------------------------------------------------------------
+//  geometry
+// ---------------------------------------------------------------------
+function ellipsePts(cx, cy, rx, ry, rot = 0, n = 64, a0 = 0, a1 = TAU) {
+  const P = [], c = Math.cos(rot), s = Math.sin(rot), full = Math.abs(a1 - a0 - TAU) < 1e-6;
+  for (let i = 0; i < n; i++) {
+    const a = a0 + (a1 - a0) * i / (full ? n : n - 1);
+    const x = Math.cos(a) * rx, y = Math.sin(a) * ry;
+    P.push([cx + x * c - y * s, cy + x * s + y * c]);
+  }
+  return P;
+}
+function rrectPts(x, y, w, h, r, n = 6) {
+  r = Math.min(r, w / 2, h / 2);
+  const P = [], cs = [[x + w - r, y + r, -Math.PI / 2], [x + w - r, y + h - r, 0], [x + r, y + h - r, Math.PI / 2], [x + r, y + r, Math.PI]];
+  for (const [cx, cy, a0] of cs) for (let i = 0; i <= n; i++) { const a = a0 + (Math.PI / 2) * i / n; P.push([cx + Math.cos(a) * r, cy + Math.sin(a) * r]); }
+  return P;
+}
+function arcPts(cx, cy, r, a0, a1, n = 18, sy = 1) {
+  const P = [];
+  for (let i = 0; i <= n; i++) { const a = a0 + (a1 - a0) * i / n; P.push([cx + Math.cos(a) * r, cy + Math.sin(a) * r * sy]); }
+  return P;
+}
+function xform(P, tx, ty, rot = 0, sx = 1, sy = sx) {
+  const c = Math.cos(rot), s = Math.sin(rot);
+  return P.map(([x, y]) => [tx + x * sx * c - y * sy * s, ty + x * sx * s + y * sy * c]);
+}
+function bbox(P, pad = 0) {
+  let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+  for (const [x, y] of P) { if (x < x0) x0 = x; if (y < y0) y0 = y; if (x > x1) x1 = x; if (y > y1) y1 = y; }
+  return { x0: x0 - pad, y0: y0 - pad, x1: x1 + pad, y1: y1 + pad };
+}
+function resample(P, closed, step) {
+  const out = [], n = P.length, m = closed ? n : n - 1;
+  for (let i = 0; i < m; i++) {
+    const a = P[i], b = P[(i + 1) % n], k = Math.max(1, Math.ceil(dist(a, b) / step));
+    for (let j = 0; j < k; j++) out.push([a[0] + (b[0] - a[0]) * j / k, a[1] + (b[1] - a[1]) * j / k]);
+  }
+  if (!closed) out.push(P[n - 1]);
+  return out;
+}
+function pathLen(P) { let L = 0; for (let i = 1; i < P.length; i++) L += dist(P[i - 1], P[i]); return L; }
+function subPath(P, frac) {
+  let want = pathLen(P) * clamp(frac);
+  const out = [P[0]];
+  for (let i = 1; i < P.length; i++) {
+    const d = dist(P[i - 1], P[i]);
+    if (want >= d) { out.push(P[i]); want -= d; }
+    else { const k = want / (d || 1); out.push([lerp(P[i - 1][0], P[i][0], k), lerp(P[i - 1][1], P[i][1], k)]); break; }
+  }
+  return out;
+}
+function pointAt(P, frac) { const S = subPath(P, frac); return S[S.length - 1]; }
+
+// ---------------------------------------------------------------------
+//  drawing kit — boil, sketchy lines, hatching, stipple, pencil, grain
+// ---------------------------------------------------------------------
+// smooth hand wobble along the normal; reseeded every boil step
+function wobble(P, closed, amt, key, step = 7) {
+  const Q = resample(P, closed, step), n = Q.length;
+  const R = RNG('wob', key, B);
+  const f1 = R.r(0.012, 0.03), f2 = R.r(0.05, 0.1), p1 = R.r(0, TAU), p2 = R.r(0, TAU);
+  const sx = R.n(amt * 0.5), sy = R.n(amt * 0.5);
+  const out = new Array(n); let s = 0;
+  for (let i = 0; i < n; i++) {
+    const a = Q[closed ? (i - 1 + n) % n : Math.max(0, i - 1)], b = Q[closed ? (i + 1) % n : Math.min(n - 1, i + 1)];
+    const nx = a[1] - b[1], ny = b[0] - a[0], l = Math.hypot(nx, ny) || 1;
+    if (i) s += dist(Q[i - 1], Q[i]);
+    const o = amt * (0.75 * Math.sin(s * f1 + p1) + 0.35 * Math.sin(s * f2 + p2));
+    out[i] = [Q[i][0] + nx / l * o + sx, Q[i][1] + ny / l * o + sy];
+  }
+  return out;
+}
+function trace(P, closed) {
+  ctx.beginPath();
+  const n = P.length; if (n < 2) return;
+  if (closed) {
+    ctx.moveTo((P[n - 1][0] + P[0][0]) / 2, (P[n - 1][1] + P[0][1]) / 2);
+    for (let i = 0; i < n; i++) { const p = P[i], q = P[(i + 1) % n]; ctx.quadraticCurveTo(p[0], p[1], (p[0] + q[0]) / 2, (p[1] + q[1]) / 2); }
+    ctx.closePath();
+  } else {
+    ctx.moveTo(P[0][0], P[0][1]);
+    for (let i = 1; i < n - 1; i++) { const p = P[i], q = P[i + 1]; ctx.quadraticCurveTo(p[0], p[1], (p[0] + q[0]) / 2, (p[1] + q[1]) / 2); }
+    ctx.lineTo(P[n - 1][0], P[n - 1][1]);
+  }
+}
+// sketchy stroke. o: closed, color, w, amt, key, alpha, frac (write-on), double
+function ink(P, o = {}) {
+  const closed = !!o.closed, key = o.key ?? 'ink';
+  let Q = o.raw ? P : wobble(P, closed, o.amt ?? 1.8, key);
+  let cl = closed;
+  if (o.frac != null && o.frac < 1) { if (o.frac <= 0) return Q; Q = subPath(closed ? [...Q, Q[0]] : Q, o.frac); cl = false; }
+  ctx.strokeStyle = o.color || C.ink; ctx.lineWidth = o.w ?? 3; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  ctx.globalAlpha = o.alpha ?? 1;
+  trace(Q, cl); ctx.stroke();
+  if (o.double) {
+    let Q2 = wobble(P, closed, (o.amt ?? 1.8) * 1.6 + 0.8, key + '~');
+    if (!cl && closed) Q2 = subPath([...Q2, Q2[0]], o.frac ?? 1);
+    ctx.lineWidth = (o.w ?? 3) * 0.4; ctx.globalAlpha = (o.alpha ?? 1) * 0.55; trace(Q2, cl); ctx.stroke();
+  }
+  ctx.globalAlpha = 1;
+  return Q;
+}
+// filled shape + textures (clipped) + ink outline
+function paint(P, o = {}) {
+  const key = o.key || 'paint';
+  const Q = o.raw ? P : wobble(P, true, o.amt ?? 1.6, key);
+  ctx.save();
+  trace(Q, true);
+  if (o.fill) { ctx.globalAlpha = o.fillAl ?? 1; ctx.fillStyle = o.fill; ctx.fill(); ctx.globalAlpha = 1; }
+  if (o.tex) { ctx.clip(); const bb = bbox(Q, 6); o.tex.forEach((t, i) => texture(bb, { key: key + ':' + i, ...t })); }
+  ctx.restore();
+  if (o.line !== false) {
+    ctx.strokeStyle = o.line || C.ink; ctx.lineWidth = o.w ?? 3; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+    ctx.globalAlpha = o.lineAl ?? 1; trace(Q, true); ctx.stroke(); ctx.globalAlpha = 1;
+  }
+  return Q;
+}
+function texture(bb, t) {
+  if (t.k === 'hatch') hatch(bb, t);
+  else if (t.k === 'cross') { hatch(bb, t); hatch(bb, { ...t, a: (t.a ?? 0.7) + (t.a2 ?? 1.25), key: t.key + 'x' }); }
+  else if (t.k === 'pencil') pencil(bb, t);
+  else if (t.k === 'stipple') stipple(bb, t);
+  else if (t.k === 'fn') t.fn(bb);
+}
+// parallel hatching inside current clip. t: a angle, gap, c, w, al, dash [min,max], skip, dens(x,y)
+function hatch(bb, t) {
+  const a = t.a ?? 0.7, gap = t.gap ?? 7, S = RNG('hs', t.key), R = RNG('hj', t.key, B);
+  const cx = (bb.x0 + bb.x1) / 2, cy = (bb.y0 + bb.y1) / 2, rad = Math.hypot(bb.x1 - bb.x0, bb.y1 - bb.y0) / 2 + 4;
+  const ca = Math.cos(a), sa = Math.sin(a), dens = t.dens, jit = t.jit ?? 0.9, dash = t.dash;
+  ctx.beginPath();
+  for (let d = -rad; d <= rad; d += gap) {
+    const dd = d + S.n(gap * 0.3);
+    let u = -rad + (dash ? S.r(0, dash[1]) : 0);
+    while (u < rad) {
+      const len = dash ? S.r(dash[0], dash[1]) : rad * 2, u2 = Math.min(rad, u + len);
+      const mu = (u + u2) / 2, mx = cx + ca * mu - sa * dd, my = cy + sa * mu + ca * dd, p = S.f();
+      if (!dens || p < dens(mx, my)) {
+        const e1 = R.n(jit), e2 = R.n(jit);
+        ctx.moveTo(cx + ca * u - sa * (dd + e1), cy + sa * u + ca * (dd + e1));
+        ctx.lineTo(cx + ca * u2 - sa * (dd + e2), cy + sa * u2 + ca * (dd + e2));
+      }
+      u = u2 + (dash ? S.r(t.skip?.[0] ?? 3, t.skip?.[1] ?? 12) : 0);
+    }
+  }
+  ctx.strokeStyle = t.c || C.ink; ctx.lineWidth = t.w ?? 1.2; ctx.globalAlpha = t.al ?? 0.5; ctx.lineCap = 'round';
+  ctx.stroke(); ctx.globalAlpha = 1;
+}
+// colored-pencil diagonal strokes
+function pencil(bb, t) {
+  const S = RNG('ps', t.key), R = RNG('pj', t.key, B);
+  const area = (bb.x1 - bb.x0) * (bb.y1 - bb.y0);
+  const n = Math.min(t.max ?? 6000, t.n ?? Math.floor(area / (t.per ?? 700)));
+  const a = t.a ?? -0.95, L = t.len ?? 14, dens = t.dens;
+  ctx.beginPath();
+  for (let i = 0; i < n; i++) {
+    const x = S.r(bb.x0, bb.x1), y = S.r(bb.y0, bb.y1), p = S.f(), aa = a + S.n(0.22), l = L * (0.5 + S.f() * 0.7);
+    if (dens && p > dens(x, y)) continue;
+    const jx = R.n(1.1), jy = R.n(1.1), dx = Math.cos(aa) * l / 2, dy = Math.sin(aa) * l / 2;
+    ctx.moveTo(x - dx + jx, y - dy + jy); ctx.lineTo(x + dx + jx, y + dy + jy);
+  }
+  ctx.strokeStyle = t.c; ctx.lineWidth = t.w ?? 1.4; ctx.globalAlpha = t.al ?? 0.45; ctx.lineCap = 'round';
+  ctx.stroke(); ctx.globalAlpha = 1;
+}
+// square stipple dots
+function stipple(bb, t) {
+  const S = RNG('ss', t.key), R = RNG('sj', t.key, B);
+  const n = t.n ?? 400, sz = t.s ?? 2.2, dens = t.dens, jit = t.jit ?? 0.8;
+  ctx.fillStyle = t.c; ctx.globalAlpha = t.al ?? 1; ctx.beginPath();
+  for (let i = 0; i < n; i++) {
+    const x = S.r(bb.x0, bb.x1), y = S.r(bb.y0, bb.y1), p = S.f(), s = sz * (0.6 + S.f() * 0.8);
+    if (dens && p > dens(x, y)) continue;
+    ctx.rect(x + R.n(jit), y + R.n(jit), s, s);
+  }
+  ctx.fill(); ctx.globalAlpha = 1;
+}
+// screen-space paper grain, reseeded with the boil
+function grain(o = {}) {
+  ctx.save(); screen();
+  const R = RNG('grain', B), n = o.n ?? 2600;
+  ctx.fillStyle = o.dark || 'rgba(70,45,25,0.13)'; ctx.beginPath();
+  for (let i = 0; i < n; i++) ctx.rect(R.r(0, W), R.r(0, H), 1.7, 1.7);
+  ctx.fill();
+  ctx.fillStyle = o.light || 'rgba(255,250,236,0.20)'; ctx.beginPath();
+  for (let i = 0; i < n; i++) ctx.rect(R.r(0, W), R.r(0, H), 1.9, 1.9);
+  ctx.fill();
+  // a few paper fibres
+  ctx.strokeStyle = 'rgba(80,55,35,0.07)'; ctx.lineWidth = 1; ctx.beginPath();
+  for (let i = 0; i < 90; i++) { const x = R.r(0, W), y = R.r(0, H), a = R.r(0, TAU), l = R.r(6, 22); ctx.moveTo(x, y); ctx.lineTo(x + Math.cos(a) * l, y + Math.sin(a) * l); }
+  ctx.stroke();
+  ctx.restore();
+}
+
+// ---------------------------------------------------------------------
+//  construction lines, rulers, sparks, bursts, rainbow contours
+// ---------------------------------------------------------------------
+function construct(cx, cy, r, o = {}) {
+  const R = RNG('con', o.key ?? 'c', B);
+  ctx.save();
+  ctx.strokeStyle = o.c || C.lav; ctx.lineWidth = o.w ?? 1.4; ctx.globalAlpha = o.al ?? 1; ctx.lineCap = 'round';
+  const a0 = (o.a0 ?? R.r(0, TAU)), sw = o.sweep ?? 1.05;
+  ctx.beginPath(); ctx.ellipse(cx + R.n(1.2), cy + R.n(1.2), r, r * (o.sq ?? 1), o.rot ?? 0, a0, a0 + TAU * sw); ctx.stroke();
+  if (o.cross) { const k = o.cross; ctx.beginPath(); ctx.moveTo(cx - k, cy); ctx.lineTo(cx + k, cy); ctx.moveTo(cx, cy - k); ctx.lineTo(cx, cy + k); ctx.stroke(); }
+  if (o.ticks) {
+    ctx.beginPath();
+    for (let i = 0; i < o.ticks; i++) { const a = i / o.ticks * TAU + (o.rot ?? 0); ctx.moveTo(cx + Math.cos(a) * (r - 6), cy + Math.sin(a) * (r - 6)); ctx.lineTo(cx + Math.cos(a) * (r + 6), cy + Math.sin(a) * (r + 6)); }
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+function cline(x1, y1, x2, y2, o = {}) {
+  const R = RNG('cl', o.key ?? 'l', B);
+  ctx.save(); ctx.strokeStyle = o.c || C.lavS; ctx.lineWidth = o.w ?? 1.2; ctx.globalAlpha = o.al ?? 1;
+  ctx.beginPath(); ctx.moveTo(x1 + R.n(1), y1 + R.n(1)); ctx.lineTo(x2 + R.n(1), y2 + R.n(1)); ctx.stroke(); ctx.restore();
+}
+function ruler(x1, y1, x2, y2, o = {}) {
+  const R = RNG('rul', o.key ?? 'r', B);
+  const L = Math.hypot(x2 - x1, y2 - y1) || 1, ux = (x2 - x1) / L, uy = (y2 - y1) / L, nx = -uy, ny = ux;
+  const frac = clamp(o.frac ?? 1), step = o.step ?? 16, tk = o.tick ?? 7, side = o.side ?? 1;
+  ctx.save(); ctx.strokeStyle = o.c || C.periD; ctx.lineWidth = o.w ?? 1.5; ctx.globalAlpha = o.al ?? 1; ctx.lineCap = 'round';
+  const jx = R.n(0.8), jy = R.n(0.8);
+  ctx.beginPath(); ctx.moveTo(x1 + jx, y1 + jy); ctx.lineTo(x1 + ux * L * frac + jx, y1 + uy * L * frac + jy);
+  const n = Math.floor(L * frac / step);
+  for (let i = 0; i <= n; i++) {
+    const k = i % 5 === 0 ? tk * 1.9 : tk, px = x1 + ux * i * step + jx, py = y1 + uy * i * step + jy;
+    ctx.moveTo(px, py); ctx.lineTo(px + nx * k * side, py + ny * k * side);
+  }
+  ctx.moveTo(x1 - nx * tk * 1.6, y1 - ny * tk * 1.6); ctx.lineTo(x1 + nx * tk * 2.2, y1 + ny * tk * 2.2);
+  if (frac >= 1) { ctx.moveTo(x2 - nx * tk * 1.6, y2 - ny * tk * 1.6); ctx.lineTo(x2 + nx * tk * 2.2, y2 + ny * tk * 2.2); }
+  ctx.stroke(); ctx.restore();
+}
+// glowing radial spark (dark world)
+function sparkBurst(cx, cy, r, o = {}) {
+  if (r <= 0.5) return;
+  const R = RNG('spk', o.key ?? 's', B), n = o.n ?? 18, rays = [];
+  for (let i = 0; i < n; i++) { const a = i / n * TAU + R.n(0.14); rays.push([a, r * R.r(0.28, 0.5), r * R.r(0.72, 1.15)]); }
+  const path = () => { ctx.beginPath(); for (const [a, r0, r1] of rays) { ctx.moveTo(cx + Math.cos(a) * r0, cy + Math.sin(a) * r0); ctx.lineTo(cx + Math.cos(a) * r1, cy + Math.sin(a) * r1); } };
+  ctx.save(); ctx.lineCap = 'round';
+  path(); ctx.strokeStyle = o.glow || 'rgba(82,214,196,0.22)'; ctx.lineWidth = (o.w ?? 2.4) * 3.4; ctx.stroke();
+  path(); ctx.strokeStyle = o.c || '#8ff5e6'; ctx.lineWidth = o.w ?? 2.4; ctx.stroke();
+  if (o.core !== false) {
+    const cr = Math.max(2.5, r * (o.coreR ?? 0.15));
+    ctx.beginPath(); ctx.arc(cx, cy, cr * 2.2, 0, TAU); ctx.fillStyle = 'rgba(190,215,255,0.16)'; ctx.fill();
+    ctx.beginPath(); ctx.arc(cx, cy, cr, 0, TAU); ctx.fillStyle = C.white; ctx.fill(); ctx.lineWidth = 2; ctx.strokeStyle = C.periD; ctx.stroke();
+  }
+  if (o.specks) { ctx.fillStyle = o.c || '#8ff5e6'; for (let i = 0; i < o.specks; i++) { const a = R.r(0, TAU), d = r * R.r(0.2, 1.4); ctx.fillRect(cx + Math.cos(a) * d, cy + Math.sin(a) * d, 2, 2); } }
+  ctx.restore();
+}
+// radial tick burst (warm world impact)
+function burst(cx, cy, r0, r1, o = {}) {
+  const R = RNG('bur', o.key ?? 'b', B), n = o.n ?? 12;
+  ctx.save(); ctx.strokeStyle = o.c || C.ink; ctx.lineWidth = o.w ?? 3; ctx.lineCap = 'round'; ctx.globalAlpha = o.al ?? 1; ctx.beginPath();
+  for (let i = 0; i < n; i++) {
+    const a = i / n * TAU + R.n(0.15) + (o.rot ?? 0), a1 = r0 * R.r(0.85, 1.1), b1 = r1 * R.r(0.75, 1.15);
+    ctx.moveTo(cx + Math.cos(a) * a1, cy + Math.sin(a) * a1); ctx.lineTo(cx + Math.cos(a) * b1, cy + Math.sin(a) * b1);
+  }
+  ctx.stroke(); ctx.restore();
+}
+function star4(x, y, s, c) {
+  ctx.save(); ctx.fillStyle = c; ctx.beginPath();
+  ctx.moveTo(x, y - s); ctx.quadraticCurveTo(x, y, x + s, y); ctx.quadraticCurveTo(x, y, x, y + s);
+  ctx.quadraticCurveTo(x, y, x - s, y); ctx.quadraticCurveTo(x, y, x, y - s); ctx.fill(); ctx.restore();
+}
+// rainbow contour strokes around a moving part
+function rainbow(P, o = {}) {
+  const bb = bbox(P), cx = o.cx ?? (bb.x0 + bb.x1) / 2, cy = o.cy ?? (bb.y0 + bb.y1) / 2, n = o.n ?? 3;
+  for (let i = 0; i < n; i++) {
+    const S = RNG('rb', o.key, i, B), sc = 1 + (o.spread ?? 0.07) * (i + 1) + S.n(0.02);
+    const Q = P.map(([x, y]) => [cx + (x - cx) * sc + S.n(o.drift ?? 3), cy + (y - cy) * sc + S.n(o.drift ?? 3)]);
+    ink(Q, { closed: o.closed ?? true, color: RAINBOW[(i + (o.off ?? 0)) % RAINBOW.length], w: o.w ?? 1.6, amt: o.amt ?? 3.5, key: o.key + 'rb' + i, alpha: o.al ?? 0.85 });
+  }
+}
+// hex cell grid inside current clip
+function hexGrid(bb, size, o = {}) {
+  const h = size * Math.sqrt(3), R = RNG('hex', o.key ?? 'h', B);
+  ctx.save(); ctx.strokeStyle = o.c || C.periS; ctx.lineWidth = o.w ?? 1.2; ctx.globalAlpha = o.al ?? 1; ctx.beginPath();
+  let row = 0;
+  for (let y = bb.y0 - h; y < bb.y1 + h; y += h * 0.5, row++) {
+    for (let x = bb.x0 - size * 3 + (row % 2) * size * 1.5; x < bb.x1 + size * 3; x += size * 3) {
+      const jx = R.n(0.6), jy = R.n(0.6);
+      for (let k = 0; k < 6; k++) {
+        const a = k / 6 * TAU, b = (k + 1) / 6 * TAU;
+        if (k === 0) ctx.moveTo(x + Math.cos(a) * size + jx, y + Math.sin(a) * size + jy);
+        ctx.lineTo(x + Math.cos(b) * size + jx, y + Math.sin(b) * size + jy);
+      }
+    }
+  }
+  ctx.stroke(); ctx.restore();
+}
+
+// ---------------------------------------------------------------------
+//  iris, camera, text
+// ---------------------------------------------------------------------
+// ragged hatched rim; dir=+1 strokes reach outward, -1 inward
+function irisRim(cx, cy, r, dir, o = {}) {
+  const R = RNG('irisR', o.key ?? 'i', B), n = Math.min(1600, Math.floor(r * TAU / 2.0));
+  ctx.strokeStyle = o.c || '#0b0c17'; ctx.lineWidth = o.w ?? 1.6; ctx.lineCap = 'round'; ctx.beginPath();
+  for (let i = 0; i < n; i++) {
+    const a = R.r(0, TAU), L = R.r(3, 11) + (R.f() < 0.28 ? R.r(10, 34) : 0), sl = R.n(0.4);
+    const r0 = r - dir * R.r(2, 6), r1 = r + dir * L, ax = Math.cos(a), ay = Math.sin(a);
+    ctx.moveTo(cx + ax * r0, cy + ay * r0); ctx.lineTo(cx + ax * r1 - ay * L * sl, cy + ay * r1 + ax * L * sl);
+  }
+  ctx.stroke();
+}
+// iris into a black hole (screen space)
+function irisHole(cx, cy, r, o = {}) {
+  if (r <= 0.5) return;
+  ctx.save(); screen();
+  const col = o.c || '#0b0c17';
+  const P = wobble(ellipsePts(cx, cy, r, r, 0, 140), true, Math.min(4, 0.6 + r * 0.02), 'ih' + (o.key ?? ''), 9);
+  trace(P, true); ctx.fillStyle = col; ctx.fill();
+  irisRim(cx, cy, r, +1, { c: col, key: o.key });
+  if (o.inner) { ctx.save(); trace(P, true); ctx.clip(); o.inner(r); ctx.restore(); }
+  ctx.restore();
+}
+// world point (cx,cy) lands at screen centre
+function camera(cx, cy, zoom = 1, rot = 0, sx = 0, sy = 0) {
+  const c = Math.cos(rot) * zoom, s = Math.sin(rot) * zoom;
+  ctx.setTransform(c, s, -s, c, W / 2 + sx - (c * cx - s * cy), H / 2 + sy - (s * cx + c * cy));
+}
+function screen() { ctx.setTransform(1, 0, 0, 1, 0, 0); }
+function toScreen(x, y) { const p = ctx.getTransform().transformPoint(new DOMPoint(x, y)); return [p.x, p.y]; }
+function fillAll(color) { ctx.save(); screen(); ctx.fillStyle = color; ctx.fillRect(0, 0, W, H); ctx.restore(); }
+
+// monospace text with per-glyph hand jitter
+function monoText(str, x, y, size, color, o = {}) {
+  ctx.save();
+  ctx.font = `${o.weight ?? 700} ${size}px ${MONO}`; ctx.fillStyle = color; ctx.textBaseline = 'alphabetic';
+  const cw = ctx.measureText('M').width, R = RNG('txt', o.key ?? str, B), jit = o.jit ?? 0.9;
+  const n = Math.min(o.count ?? str.length, str.length);
+  ctx.globalAlpha = o.al ?? 1;
+  for (let i = 0; i < n; i++) {
+    const ch = str[i]; if (ch === ' ') continue;
+    ctx.save(); ctx.translate(x + i * cw + R.n(jit), y + R.n(jit)); ctx.rotate(R.n(0.045)); ctx.fillText(ch, 0, 0); ctx.restore();
+  }
+  ctx.restore();
+  return cw;
+}
+function monoW(size) { ctx.save(); ctx.font = `700 ${size}px ${MONO}`; const w = ctx.measureText('M').width; ctx.restore(); return w; }
+
+// single-stroke hand lettering (x-height 0.5, ascender 1.0, baseline 0)
+const GLYPHS = {
+  ' ': { w: 0.26, s: [] },
+  c: { w: 0.5, s: [arcPts(0.26, -0.25, 0.25, -35 * DEG, -322 * DEG, 22)] },
+  o: { w: 0.52, s: [arcPts(0.26, -0.25, 0.25, -95 * DEG, -460 * DEG, 30)] },
+  a: { w: 0.54, s: [[...arcPts(0.25, -0.25, 0.235, -28 * DEG, -335 * DEG, 24)], [[0.49, -0.5], [0.49, -0.05], [0.55, 0.0]]] },
+  d: { w: 0.56, s: [[...arcPts(0.25, -0.25, 0.235, -28 * DEG, -335 * DEG, 24)], [[0.49, -1.0], [0.49, -0.05], [0.56, 0.0]]] },
+  l: { w: 0.24, s: [[[0.08, -1.0], [0.08, -0.1], [0.12, -0.01], [0.2, 0.0]]] },
+  u: { w: 0.54, s: [[[0.03, -0.5], [0.03, -0.22], ...arcPts(0.255, -0.22, 0.225, 180 * DEG, 0, 14), [0.48, -0.5]], [[0.48, -0.5], [0.48, -0.04], [0.54, 0.0]]] },
+  e: { w: 0.52, s: [[[0.03, -0.26], [0.5, -0.26], ...arcPts(0.265, -0.25, 0.245, -4 * DEG, -318 * DEG, 26)]] },
+};
+function handwrite(str, x, y, size, o = {}) {
+  const strokes = []; let pen = 0;
+  for (const ch of str) {
+    const g = GLYPHS[ch] || GLYPHS[' '];
+    for (const s of g.s) strokes.push(s.map(([u, v]) => [x + (pen + u) * size, y + v * size]));
+    pen += g.w + 0.1;
+  }
+  const lens = strokes.map(pathLen), total = lens.reduce((a, b) => a + b, 0);
+  let budget = clamp(o.frac ?? 1) * total;
+  for (let i = 0; i < strokes.length && budget > 0; i++) {
+    const f = Math.min(1, budget / lens[i]); budget -= lens[i];
+    if (o.glow) ink(strokes[i], { color: o.glow, w: (o.w ?? size * 0.06) * 3, amt: o.amt ?? 1.0, key: 'hw' + i + str, frac: f });
+    ink(strokes[i], { color: o.c, w: o.w ?? size * 0.06, amt: o.amt ?? 1.0, key: 'hw' + i + str, frac: f });
+  }
+  return pen * size;
+}
+
+// =====================================================================
+// ---- small props and helpers
+function drawPencil(tx, ty, ang, len, k = 1, key = 'pencil') {
+  ctx.save(); ctx.translate(tx, ty); ctx.rotate(ang); ctx.scale(k, k);
+  paint([[46, -16], [len, -16], [len, 16], [46, 16]], {
+    fill: C.yellow, key: key + 'b', w: 3,
+    tex: [{ k: 'hatch', a: 0.05, gap: 5, c: '#a8741d', al: 0.55, w: 1.1, dash: [20, 90], dens: (x, y) => (y > 5 ? 1 : 0.08) }, { k: 'pencil', c: '#fff1b8', al: 0.5, a: 0.05, len: 30, per: 120, dens: (x, y) => (y < -4 ? 1 : 0.1) }],
+  });
+  ink([[50, -5], [len, -5]], { w: 1.6, key: key + 'f1', alpha: 0.7 });
+  ink([[50, 6], [len, 6]], { w: 1.6, key: key + 'f2', alpha: 0.7 });
+  paint([[1, 0], [46, -15], [46, 15]], { fill: '#efcf9f', key: key + 'c', w: 2.6, tex: [{ k: 'hatch', a: 1.2, gap: 4, al: 0.35, dens: (x, y) => (y > 2 ? 1 : 0.1) }] });
+  paint([[0, 0], [15, -5], [15, 5]], { fill: '#3b3438', key: key + 't', w: 2 });
+  paint([[len, -17], [len + 26, -17], [len + 26, 17], [len, 17]], { fill: '#bcb7ab', key: key + 'fe', w: 2.6, tex: [{ k: 'hatch', a: Math.PI / 2, gap: 5, al: 0.5 }] });
+  paint(rrectPts(len + 24, -16, 34, 32, 10), { fill: '#e58f8c', key: key + 'e', w: 2.6, tex: [{ k: 'pencil', c: C.roseD, al: 0.5, per: 60 }] });
+  ctx.restore();
+}
+// smoothstep of x between a and b (NOT manim's `smooth` rate function — the math style calls that smoothM)
+const smooth = (a, b, x) => { const u = clamp((x - a) / (b - a)); return u * u * (3 - 2 * u); };
+const mod = (a, n) => ((a % n) + n) % n;
+function asterisk(x, y, r0, r1, n, rot, color, w) {
+  ctx.save(); ctx.strokeStyle = color; ctx.lineWidth = w; ctx.lineCap = 'round'; ctx.beginPath();
+  for (let i = 0; i < n; i++) { const a = i / n * TAU + rot; ctx.moveTo(x + Math.cos(a) * r0, y + Math.sin(a) * r0); ctx.lineTo(x + Math.cos(a) * r1, y + Math.sin(a) * r1); }
+  ctx.stroke(); ctx.restore();
+}
+
+// ---------------------------------------------------------------------
+//  time (set by the renderer): TT = absolute time on the motion step (on 2s unless STYLE.ones);
+//  E0 = the current era's start; DEFER = overlay queue (captions drawn after the camera); SPARK_AT = the hero's screen spot
+//  ev(t, d) = 0..1 progress of an event at t over d seconds; popS(t) = back-eased pop-in scale
+// ---------------------------------------------------------------------
+let TT = 0, E0 = 0, DEFER = null, SPARK_AT = null;
+const ev = (t, d = 0.25) => clamp((TT - t) / d);
+const popS = (t) => (TT < t ? 0 : EZ.back(clamp((TT - t) / 0.25)));
+
+// ---------------------------------------------------------------------
+//  springs: closed-form, so any frame can be drawn on its own (deterministic, no state)
+//  springEase(t, k, d)       0 -> 1 over time t >= 0 (stiffness k, damping d): accelerates, overshoots a hair, settles
+//  springMove(t0, a, b, p)   a value moving from a to b, starting at time t0 (p = a SPRING preset)
+//  springTrack(keys, p)      a value with many targets: keys = [[t, value], ...] sorted by t. One spring per change,
+//                            added up, so a target change mid-move stays continuous (cursors, widths, positions)
+// ---------------------------------------------------------------------
+const SPRING = {
+  snappy: { k: 320, d: 30 },    // UI: buttons, toggles, leading edges
+  smooth: { k: 170, d: 26 },    // cards, containers, the camera
+  heavy: { k: 90, d: 19 },      // big type, logos, large objects
+  playful: { k: 260, d: 14 },   // mascots, stickers: visible overshoot
+};
+function springEase(t, k = 170, d = 26) {
+  if (t <= 0) return 0;
+  const w0 = Math.sqrt(k), z = d / (2 * w0);
+  if (z < 1) { const wd = w0 * Math.sqrt(1 - z * z); return 1 - Math.exp(-z * w0 * t) * (Math.cos(wd * t) + (z * w0 / wd) * Math.sin(wd * t)); }
+  return 1 - Math.exp(-w0 * t) * (1 + w0 * t);
+}
+const springMove = (t0, a, b, p = SPRING.smooth) => a + (b - a) * springEase(TT - t0, p.k, p.d);
+function springTrack(keys, p = SPRING.smooth) {
+  let v = keys[0][1];
+  for (let i = 1; i < keys.length; i++) v += (keys[i][1] - keys[i - 1][1]) * springEase(TT - keys[i][0], p.k, p.d);
+  return v;
+}
+
+// ---------------------------------------------------------------------
+//  layout for several formats (9:16, 1:1, 16:9, 4:5 from one piece): place things by fractions of the frame,
+//  size them by UNIT (1 at 1080 on the short side). LX(0.5), LY(0.62), 120 * UNIT. PORTRAIT / WIDE pick layouts.
+// ---------------------------------------------------------------------
+const LX = (f) => f * W, LY = (f) => f * H, UNIT = Math.min(W, H) / 1080, PORTRAIT = H > W * 1.2, WIDE = W > H * 1.2;
+
+// ---------------------------------------------------------------------
+//  the user's own assets (screenshots, logos): files in <piece>/assets/ that tools/build.mjs embeds in the page.
+//  asset('logo.png') -> the Image (or null); drawAsset(name, x, y, w, h, { fit: 'contain'|'cover', r, alpha })
+//  Real product UI only: never redraw a product screen from imagination when a screenshot exists.
+// ---------------------------------------------------------------------
+const asset = (name) => (typeof ASSETS !== 'undefined' && ASSETS[name] && ASSETS[name].complete ? ASSETS[name] : null);
+function drawAsset(name, x, y, w, h, o = {}) {
+  const img = asset(name); if (!img) return false;
+  const iw = img.naturalWidth || img.width, ih = img.naturalHeight || img.height;
+  const s = (o.fit === 'cover' ? Math.max : Math.min)(w / iw, h / ih), dw = iw * s, dh = ih * s;
+  ctx.save(); ctx.globalAlpha *= o.alpha ?? 1;
+  if (o.r || o.fit === 'cover') { ctx.beginPath(); ctx.roundRect(x, y, w, h, o.r || 0); ctx.clip(); }
+  ctx.drawImage(img, x + (w - dw) / 2, y + (h - dh) / 2, dw, dh);
+  ctx.restore(); return true;
+}
+// =====================================================================
+//  styles/crosshatch/kit.js — sketchy ink on warm paper. The drawing primitives live in kit/core.js
+//  (ink, paint with hatch / cross / pencil / stipple textures, wobble on the boil, grain, monoText, handwrite,
+//  drawPencil, irisHole, hexGrid, construct); this file adds the look's surfaces, props, hero, captions and STYLE.
+//  Needs from the piece head: HAND (font stack), CX (caption centre x).
+//  Shade with density functions (dens(x, y) -> 0..1), never flat fills; world-anchor textures when the camera pans.
+// =====================================================================
+const HANDF = HAND;
+function handText(str, x, y, size, color, o = {}) {
+  ctx.save();
+  const R = RNG('ht', o.key ?? str, B);
+  ctx.translate(x + R.n(0.7), y + R.n(0.7)); ctx.rotate((o.rot ?? 0) + R.n(0.006));
+  ctx.font = `${o.weight ?? 400} ${size}px ${HANDF}`; ctx.fillStyle = color; ctx.textBaseline = 'alphabetic';
+  const w = ctx.measureText(str).width, frac = clamp(o.frac ?? 1);
+  if (frac <= 0) { ctx.restore(); return w; }
+  if (frac < 1) { ctx.beginPath(); ctx.rect(-4, -size * 1.2, w * frac + 4, size * 1.7); ctx.clip(); }
+  ctx.globalAlpha = o.al ?? 1; ctx.fillText(str, 0, 0);
+  ctx.restore();
+  return w;
+}
+function handW(str, size, weight = 400) { ctx.save(); ctx.font = `${weight} ${size}px ${HANDF}`; const w = ctx.measureText(str).width; ctx.restore(); return w; }
+const box = (x, y, w, h) => resample([[x, y], [x + w, y], [x + w, y + h], [x, y + h]], true, 30);   // dense, so trace() keeps the corners
+
+// ---- surfaces: a full-bleed world in ink (paper, wood, cloth, the dark "inside the machine")
+function paperSheet(key = 'sheet', o = {}) {   // warm paper with faint ruled lines
+  paint(box(-40, -40, W + 80, H + 80), { raw: true, line: false, fill: o.fill || C.paper, key: key + 'b', tex: [{ k: 'pencil', c: '#fffaf0', al: 0.45, per: 700, a: -0.6 }] });
+  if (o.ruled !== false) { ctx.save(); ctx.strokeStyle = C.paperLine; ctx.lineWidth = 1.4; ctx.beginPath(); for (let y = 260; y < H; y += 64) { ctx.moveTo(0, y); ctx.lineTo(W, y + RNG('rl', key, y).n(2)); } ctx.stroke(); ctx.restore(); }
+}
+function woodSurface(x0, y0, x1, y1, key, o = {}) {
+  const S = RNG('woodS', key), R = RNG('woodR', key, B);
+  paint(box(x0, y0, x1 - x0, y1 - y0), {
+    raw: true, line: false, fill: o.fill || C.wood, key,
+    tex: [{ k: 'pencil', c: C.woodL, al: 0.32, a: 0.02, len: 46, per: 900 }, { k: 'pencil', c: C.woodD, al: 0.16, a: -0.03, len: 30, per: 1400 }],
+  });
+  ctx.beginPath();
+  for (let y = y0; y < y1; y += S.r(11, 24)) {
+    const f = S.r(0.002, 0.006), ph = S.r(0, TAU), A = S.r(1, 5);
+    let down = S.f() < 0.8, left = S.r(40, 420);
+    for (let x = x0; x <= x1; x += 22) {
+      const yy = y + Math.sin(x * f + ph) * A + R.n(0.5);
+      if (down) ctx.lineTo(x, yy); else ctx.moveTo(x, yy);
+      left -= 22;
+      if (left <= 0) { down = !down; left = down ? S.r(60, 480) : S.r(10, 70); if (down) ctx.moveTo(x, yy); }
+    }
+  }
+  ctx.strokeStyle = C.ink; ctx.lineWidth = o.gw ?? 1.3; ctx.globalAlpha = o.gal ?? 0.42; ctx.stroke(); ctx.globalAlpha = 1;
+}
+function darkWorld(key, o = {}) {   // navy, dust specks and tiny crosses: inside the computer
+  fillAll(o.fill || C.navy);
+  const R = RNG('dust', key), J = RNG('dustj', key, B);
+  ctx.save(); screen();
+  ctx.fillStyle = 'rgba(150,160,220,0.28)'; ctx.beginPath();
+  for (let i = 0; i < (o.dust ?? 260); i++) ctx.rect(R.r(0, W) + J.n(0.6), R.r(0, H) + J.n(0.6), R.r(1, 2.4), R.r(1, 2.4));
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(40,44,90,0.5)'; ctx.lineWidth = 1; ctx.beginPath();
+  for (let i = 0; i < 70; i++) { const x = R.r(0, W), y = R.r(0, H); ctx.moveTo(x - 4, y); ctx.lineTo(x + 4, y); ctx.moveTo(x, y - 4); ctx.lineTo(x, y + 4); }
+  ctx.stroke(); ctx.restore();
+}
+function stripedCloth(key, o = {}) {
+  paint(box(-600, -600, 2300, 2300 + H), { raw: true, line: false, fill: o.base || C.cream, key: key + 'b', tex: [{ k: 'pencil', c: '#fffaf0', al: 0.5, per: 500, a: -0.8 }] });
+  for (let k = -12; k < 12; k++) {
+    const x = k * 190, P = [[x, -600], [x + 95, -600], [x + 95 + 2300, 1700 + H], [x + 2300, 1700 + H]];
+    paint(P, { raw: true, line: false, fill: o.stripe || 'rgba(240,205,120,0.45)', key: key + 's' + k, tex: [{ k: 'hatch', a: Math.atan2(2300, 2300), gap: 4, c: o.hatchC || '#d9a441', al: 0.35, w: 1, dash: [30, 140] }] });
+  }
+}
+
+// ---- props
+function inkMug(x, y, r, key = 'mug', o = {}) {   // a mug seen from above; the coffee is a good bridge object
+  paint(ellipsePts(x + 16, y + 20, r, r, 0, 40), { fill: 'rgba(92,55,28,0.25)', line: false, key: key + 'sh', tex: [{ k: 'hatch', a: 0.8, gap: 5, al: 0.4 }] });
+  paint(rrectPts(x + r * 0.7, y - 20, r * 0.75, 40, 18), { fill: '#f2ede2', key: key + 'h', w: 3 });
+  paint(ellipsePts(x, y, r, r, 0, 44), { fill: '#f2ede2', key: key + 'b', w: 3.2, tex: [{ k: 'pencil', c: '#d9cdb8', al: 0.6, per: 60 }, { k: 'hatch', gap: 4, a: 0.7, al: 0.3, dash: [8, 24], dens: (px, py) => clamp((px - x + py - y) / r) }] });
+  ink(ellipsePts(x, y, r * 0.84, r * 0.84, 0, 40), { closed: true, w: 2, key: key + 'rim' });
+  paint(ellipsePts(x, y, r * 0.78, r * 0.78, 0, 40), { fill: '#6e4128', key: key + 'c', w: 1.6, tex: [{ k: 'cross', c: '#2e170b', al: 0.35, gap: 5 }] });
+  if (o.steam !== false) for (let i = 0; i < 3; i++) { const P = []; for (let k = 0; k <= 10; k++) P.push([x - 30 + i * 30 + Math.sin(k * 0.8 + TT * 3 + i) * 10, y - r - 20 - k * 14]); ink(P, { w: 2.4, color: 'rgba(58,36,23,0.45)', key: key + 'st' + i }); }
+}
+function toolPill(label, arg, x, y, t, o = {}) {   // a hand-painted tool-call tag: Read(notes.md). Keep them true.
+  const size = o.size ?? 30, cw = monoW(size), text = label + '(' + arg + ')';
+  const w = 70 + cw * text.length, h = size * 1.75, pop = EZ.back(seg(TT, t, t + 0.12));
+  if (pop <= 0) return;
+  ctx.save(); ctx.translate(x, y); ctx.scale(pop, pop); ctx.rotate(o.rot ?? -0.02);
+  paint(rrectPts(4, 6, w, h, 14), { fill: 'rgba(58,36,23,0.35)', line: false, key: 'pillsh' + label });
+  paint(rrectPts(0, 0, w, h, 14), { fill: C.paper, key: 'pill' + label, w: 3, tex: [{ k: 'pencil', c: '#e8d6b0', al: 0.6, per: 90 }] });
+  ctx.beginPath(); ctx.arc(30, h / 2, 9, 0, TAU); ctx.fillStyle = o.dot || C.green; ctx.fill(); ctx.lineWidth = 2; ctx.strokeStyle = C.ink; ctx.stroke();
+  monoText(label, 50, h / 2 + size * 0.36, size, C.ink, { key: 'pl' + label });
+  monoText('(' + arg + ')', 50 + cw * label.length, h / 2 + size * 0.36, size, '#8a5a3a', { key: 'pa' + label, weight: 400 });
+  ctx.restore();
+}
+function planInk(P, o = {}) {   // the plan: red pencil dashes, written on
+  if ((o.frac ?? 1) <= 0) return;
+  ctx.save(); ctx.setLineDash(o.dash ?? [16, 11]);
+  ink(P, { closed: o.closed, color: o.c ?? 'rgba(212,56,44,0.92)', w: o.w ?? 3.4, amt: o.amt ?? 2.2, key: o.key ?? 'plan', frac: o.frac, alpha: o.al ?? 1 });
+  ctx.restore();
+}
+
+// ---- the hero: a terracotta dot with a cream asterisk and a pair of eyes; works on paper and on navy
+function dotHero(x, y, r, o = {}) {
+  const key = o.key ?? 'hero', dark = !!o.dark;
+  y += Math.sin(TT * TAU * 0.9 + key.length) * r * 0.04;                  // idle bob
+  SPARK_AT = toScreen(x, y);
+  if (!dark && o.shadow !== false) paint(ellipsePts(x + r * 0.55, y + r * 0.75, r * 1.08, r, 0, 28), { fill: 'rgba(58,36,23,0.3)', line: false, key: key + 'sh', tex: [{ k: 'hatch', a: 0.8, gap: 4, al: 0.6 }] });
+  const P = ellipsePts(x, y, r, r, 0, 30);
+  if (dark) { ink(P, { closed: true, color: 'rgba(240,150,110,0.18)', w: r * 0.7, key: key + 'g' }); ink(P, { closed: true, color: 'rgba(200,208,240,0.2)', w: 16, key: key + 'g2' }); }
+  paint(P, {
+    fill: C.terra, key, line: dark ? C.peri : C.ink, w: dark ? 5 : Math.max(3, r * 0.08),
+    tex: [{ k: 'cross', c: C.orangeD, al: 0.5, gap: 5 }, { k: 'pencil', c: C.orangeL, al: 0.35, per: 60, dens: (px, py) => clamp((x - px + y - py) / r) }],
+  });
+  asterisk(x, y - r * 0.38, r * 0.06, r * 0.26, 8, o.spin ?? TT * 0.5, C.cream, Math.max(2, r * 0.06));
+  const blink = (B + key.length * 7) % 41 < 2, ey = y + r * 0.08;
+  for (const s of [-1, 1]) {
+    if (blink) ink([[x + s * r * 0.28 - r * 0.08, ey], [x + s * r * 0.28 + r * 0.08, ey]], { w: r * 0.06, color: C.ink, key: key + 'bl' + s, amt: 0.3 });
+    else { ctx.fillStyle = C.ink; ctx.beginPath(); ctx.ellipse(x + s * r * 0.28, ey, r * 0.075, r * (o.mood === 'wow' ? 0.12 : 0.1), 0, 0, TAU); ctx.fill(); }
+  }
+  if (o.mood === 'happy') ink(arcPts(x, y + r * 0.3, r * 0.2, Math.PI * 0.15, Math.PI * 0.85, 10), { w: r * 0.06, color: C.ink, key: key + 'm', amt: 0.4 });
+  return P;
+}
+
+// ---- captions: a paper card with an ink outline, drawn after the camera (DEFER)
+function inkCard(str, x, y, size, o = {}) {
+  const w = handW(str, size) + size * 0.9, h = size * 1.45, s = o.s ?? 1; if (s <= 0.01) return;
+  ctx.save(); ctx.translate(x, y); ctx.rotate(o.rot ?? -0.02); ctx.scale(s, s);
+  paint(rrectPts(-w / 2 + 6, -h / 2 + 8, w, h, 10), { fill: 'rgba(58,36,23,0.3)', line: false, key: 'cardsh' + str, tex: [{ k: 'hatch', a: 0.8, gap: 4, al: 0.5 }] });
+  paint(rrectPts(-w / 2, -h / 2, w, h, 10), { fill: C.paper, key: 'card' + str, w: 3, tex: [{ k: 'pencil', c: '#e8d6b0', al: 0.5, per: 90 }] });
+  handText(str, -w / 2 + size * 0.45, size * 0.36, size, o.color ?? C.ink, { key: 'cardt' + str, frac: o.frac });
+  ctx.restore();
+}
+const inkTag = (str) => { const f = () => inkCard(str, 70 + (handW(str, 80) + 72) / 2, 330, 80, { rot: -0.04, s: popS(E0 + 0.2) }); if (DEFER) DEFER.push(f); else f(); };
+const inkCaption = (str) => { const f = () => inkCard(str, CX, 1440, 50, { rot: 0.012, frac: ev(E0 + 0.45, 0.6) }); if (DEFER) DEFER.push(f); else f(); };
+
+// =====================================================================
+//  paperprint additions — 16:9 explainer look: diagonal-striped paper worlds and navy blueprint worlds,
+//  a small lowercase scene label top-left and a progress dial top-right. Lines are cleaner than crosshatch
+//  (low wobble), fills are flat paper with light pencil grain, not heavy hatching.
+// =====================================================================
+const SANS = '"Inter", "SF Pro Text", "Helvetica Neue", "Segoe UI", Arial, sans-serif';
+const PP = {
+  ink: '#2b2622', paper: '#f8f5eb', paper2: '#efe9d8', cream: '#ede5cc', bar: '#e6dfcb',
+  tint: { blue: '#c9d6d8', green: '#d6e2c6', yellow: '#ecdca4', rose: '#ecd2c4' },
+  navy: '#0e142d', navy2: '#16204a', navyL: '#1d2858', line: '#aeb9ec', lineD: 'rgba(150,165,230,0.35)',
+  label: '#eef0ff', under: '#e9c46a', terra: '#d97757', terraD: '#b85c3f', cyan: '#6fe0cf', gold: '#f2c66d',
+};
+const PPS = 1;   // the kit draws in a 1920x1080 world
+
+function sansText(str, x, y, size, color, o = {}) {
+  ctx.save(); ctx.font = `${o.weight ?? 600} ${size}px ${SANS}`; ctx.fillStyle = color; ctx.textAlign = o.align ?? 'left'; ctx.textBaseline = 'alphabetic';
+  ctx.globalAlpha = o.al ?? 1;
+  const w = ctx.measureText(str).width;
+  const n = o.count == null ? str.length : Math.max(0, Math.min(str.length, o.count));
+  ctx.fillText(str.slice(0, n), x, y);
+  ctx.restore(); return w;
+}
+function sansW(str, size, weight = 600) { ctx.save(); ctx.font = `${weight} ${size}px ${SANS}`; const w = ctx.measureText(str).width; ctx.restore(); return w; }
+
+// ---- worlds
+function stripeWorld(key, tint = 'blue', o = {}) {
+  fillAll(PP.cream);
+  const c = PP.tint[tint] || tint, band = o.band ?? 150, a = -0.62;   // stripes rise to the right
+  ctx.save(); screen(); ctx.translate(W / 2, H / 2); ctx.rotate(a);
+  ctx.fillStyle = c;
+  for (let k = -12; k <= 12; k++) ctx.fillRect(k * band * 2, -H * 2, band, H * 4);
+  ctx.restore();
+  // faint construction grid, like a layout sheet
+  ctx.save(); screen(); ctx.strokeStyle = 'rgba(90,80,60,0.07)'; ctx.lineWidth = 1; ctx.setLineDash([3, 7]); ctx.beginPath();
+  for (let x = 160; x < W; x += 400) { ctx.moveTo(x, 0); ctx.lineTo(x, H); }
+  for (let y = 180; y < H; y += 360) { ctx.moveTo(0, y); ctx.lineTo(W, y); }
+  ctx.stroke(); ctx.restore();
+}
+function blueprintWorld(key, o = {}) {
+  fillAll(PP.navy);
+  ctx.save(); screen();
+  const g = ctx.createRadialGradient(W * 0.5, H * 0.48, 40, W * 0.5, H * 0.5, W * 0.62);
+  g.addColorStop(0, '#1f2a5c'); g.addColorStop(0.55, '#141b40'); g.addColorStop(1, '#0b1028');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = 'rgba(120,140,230,0.06)'; ctx.lineWidth = 1; ctx.beginPath();
+  for (let x = 0; x <= W; x += 48) { ctx.moveTo(x, 0); ctx.lineTo(x, H); }
+  for (let y = 0; y <= H; y += 48) { ctx.moveTo(0, y); ctx.lineTo(W, y); }
+  ctx.stroke();
+  // edge rulers with ticks
+  ctx.strokeStyle = 'rgba(170,185,240,0.30)'; ctx.beginPath();
+  for (const x of [120, W - 120]) { ctx.moveTo(x, 250); ctx.lineTo(x, H - 150); for (let y = 250; y <= H - 150; y += 22) { const l = (y / 22) % 5 === 0 ? 12 : 6; ctx.moveTo(x, y); ctx.lineTo(x + (x < W / 2 ? l : -l), y); } }
+  ctx.stroke();
+  // corner brackets
+  ctx.strokeStyle = 'rgba(170,185,240,0.22)'; ctx.beginPath();
+  for (const [x, y, sx, sy] of [[40, 40, 1, 1], [W - 40, 40, -1, 1], [40, H - 40, 1, -1], [W - 40, H - 40, -1, -1]]) { ctx.moveTo(x, y + sy * 26); ctx.lineTo(x, y); ctx.lineTo(x + sx * 26, y); }
+  ctx.stroke();
+  // dust on 2s
+  const R = RNG('bpd', key), J = RNG('bpdj', key, B);
+  ctx.fillStyle = 'rgba(170,185,250,0.22)'; ctx.beginPath();
+  for (let i = 0; i < (o.dust ?? 160); i++) ctx.rect(R.r(0, W) + J.n(0.6), R.r(0, H) + J.n(0.6), R.r(1, 2.2), R.r(1, 2.2));
+  ctx.fill();
+  ctx.restore();
+}
+
+// ---- chrome: the scene label (top-left) and the progress dial (top-right); drawn at screen size via DEFER
+function sceneLabel(str, t0, o = {}) {
+  const f = () => {
+    ctx.save(); screen();
+    const dark = !!o.dark, size = o.size ?? 46, x = 110, y = 118;
+    const n = Math.ceil(clamp((TT - t0) / 0.5) * str.length);
+    const w = sansText(str, x, y, size, dark ? PP.label : PP.ink, { count: n });
+    const u = ev(t0 + 0.3, 0.4);
+    if (u > 0) { ctx.fillStyle = dark ? 'rgba(200,210,250,0.55)' : PP.under; ctx.fillRect(x, y + 16, Math.min(w, 260) * u, 5); }
+    ctx.restore();
+  };
+  if (DEFER) DEFER.push(f); else f();
+}
+function progressDial(frac, label, o = {}) {
+  const f = () => {
+    ctx.save(); screen();
+    const dark = !!o.dark, x = W - 165, y = 120, r = 44;
+    ctx.lineWidth = 3; ctx.strokeStyle = dark ? 'rgba(200,210,250,0.28)' : 'rgba(43,38,34,0.18)';
+    ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.stroke();
+    ctx.strokeStyle = PP.terra; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.arc(x, y, r, -Math.PI / 2, -Math.PI / 2 + TAU * clamp(frac)); ctx.stroke();
+    ctx.fillStyle = dark ? '#1a2148' : PP.paper; ctx.beginPath(); ctx.arc(x, y, r - 8, 0, TAU); ctx.fill();
+    ctx.fillStyle = PP.terra; ctx.fillRect(x - 8, y - 8, 16, 16);
+    sansText(label, x, y + r + 40, 26, dark ? 'rgba(230,234,255,0.8)' : 'rgba(43,38,34,0.75)', { weight: 500, align: 'center' });
+    ctx.restore();
+  };
+  if (DEFER) DEFER.push(f); else f();
+}
+
+// ---- paper props
+function softShadow(P, key, dx = 10, dy = 14, al = 0.16) {
+  ctx.save(); ctx.translate(dx, dy); trace(P, true); ctx.fillStyle = `rgba(60,45,30,${al})`; ctx.fill(); ctx.restore();
+}
+function appWindow(x, y, w, h, title, o = {}) {   // a generic app window in ink (not a real product's UI)
+  const key = o.key ?? 'win' + title, r = 22;
+  const P = rrectPts(x, y, w, h, r);
+  softShadow(P, key);
+  paint(P, { fill: PP.paper, key, w: 3.4, amt: 0.7, line: PP.ink, tex: [{ k: 'pencil', c: '#efe7d2', al: 0.35, per: 600, a: -0.5 }] });
+  ctx.save(); trace(P, true); ctx.clip();
+  ctx.fillStyle = PP.bar; ctx.fillRect(x, y, w, 64);
+  ctx.restore();
+  ink([[x, y + 64], [x + w, y + 64]], { w: 2.4, amt: 0.5, key: key + 'bar', color: PP.ink });
+  ['#e06b5a', '#e9b949', '#6fae63'].forEach((c, i) => { ctx.fillStyle = c; ctx.beginPath(); ctx.arc(x + 34 + i * 30, y + 32, 9, 0, TAU); ctx.fill(); ctx.lineWidth = 1.6; ctx.strokeStyle = PP.ink; ctx.stroke(); });
+  if (title) sansText(title, x + w / 2, y + 42, 26, 'rgba(43,38,34,0.75)', { weight: 500, align: 'center' });
+  return { x, y: y + 64, w, h: h - 64 };
+}
+function paperCloud(x, y, s, key) {   // a flat-bottomed cloud from round bumps; drifts slowly
+  x += TT * 9 * s;
+  const bumps = [[-52, -4, 30], [-18, -26, 40], [24, -20, 34], [56, -2, 26]], P = [];
+  for (let i = 0; i <= 60; i++) {   // outline = farthest point of the bump union along each angle (upper half), flat base
+    const a = Math.PI + Math.PI * i / 60; let best = 0;
+    for (const [bx, by, br] of bumps) { const dx = Math.cos(a), dy = Math.sin(a), b = bx * dx + by * dy, c = bx * bx + by * by - br * br, d = b * b - c; if (d >= 0) best = Math.max(best, b + Math.sqrt(d)); }
+    P.push([x + Math.cos(a) * best * s * 1.15, y + Math.min(0, Math.sin(a) * best) * s]);
+  }
+  paint(P, { fill: '#fbf9f1', key, w: 2.6, amt: 0.6, line: PP.ink, tex: [{ k: 'hatch', a: 0.2, gap: 6, al: 0.16, dash: [20, 30], dens: (px, py) => clamp((py - y + 16) / 22) }] });
+}
+function docCard(x, y, w, h, title, o = {}) {   // a paper document with a header line and text lines
+  const key = o.key ?? 'doc' + title, P = rrectPts(x, y, w, h, 10);
+  ctx.save(); ctx.translate(x + w / 2, y + h / 2); ctx.rotate(o.rot ?? 0); ctx.translate(-(x + w / 2), -(y + h / 2));
+  softShadow(P, key, 8, 10, 0.18);
+  paint(P, { fill: PP.paper, key, w: 3, amt: 0.6, line: PP.ink });
+  ctx.fillStyle = o.accent ?? PP.terra; ctx.fillRect(x + 22, y + 24, w - 44, 8);
+  sansText(title, x + 22, y + 72, o.size ?? 30, PP.ink, { weight: 700 });
+  const R = RNG('docl', key);
+  for (let i = 0; i < (o.lines ?? 5); i++) { const ly = y + 106 + i * 26; if (ly > y + h - 24) break; ctx.fillStyle = 'rgba(43,38,34,0.22)'; ctx.fillRect(x + 22, ly, (w - 44) * R.r(0.5, 0.95), 7); }
+  if (o.total) { ctx.fillStyle = 'rgba(43,38,34,0.75)'; ctx.fillRect(x + w - 22 - 90, y + h - 40, 90, 10); }
+  ctx.restore();
+}
+
+// ---- blueprint props: clean hairlines with a glow
+function bpLine(P, o = {}) {
+  ctx.save(); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  let Q = P, cl = !!o.closed; if (o.frac != null && o.frac < 1) { if (o.frac <= 0) { ctx.restore(); return; } Q = subPath(cl ? [...P, P[0]] : P, o.frac); cl = false; }
+  if (o.dash) ctx.setLineDash(o.dash);
+  ctx.strokeStyle = o.glow ?? 'rgba(150,170,255,0.18)'; ctx.lineWidth = (o.w ?? 2) * 4; trace(Q, cl); ctx.stroke();
+  ctx.strokeStyle = o.color ?? PP.line; ctx.lineWidth = o.w ?? 2; ctx.globalAlpha = o.al ?? 1; trace(Q, cl); ctx.stroke();
+  ctx.restore();
+}
+function bpPill(str, x, y, o = {}) {   // a rounded node with a mono label
+  const size = o.size ?? 26, w = monoW(size) * str.length + 44, h = size * 1.7;
+  ctx.save(); ctx.globalAlpha = o.al ?? 1;
+  const P = rrectPts(x - w / 2, y - h / 2, w, h, h / 2);
+  trace(P, true); ctx.fillStyle = o.fill ?? 'rgba(22,32,74,0.92)'; ctx.fill();
+  ctx.lineWidth = 2; ctx.strokeStyle = o.line ?? PP.line; ctx.stroke();
+  monoText(str, x - w / 2 + 22, y + size * 0.36, size, o.color ?? PP.label, { key: 'bpp' + str, weight: 500 });
+  ctx.restore();
+  return w;
+}
+function glint(x, y, s, al = 1) { ctx.save(); ctx.globalAlpha = al; star4(x, y, s, '#ffffff'); ctx.globalAlpha = al * 0.3; ctx.fillStyle = '#c9d4ff'; ctx.beginPath(); ctx.arc(x, y, s * 1.4, 0, TAU); ctx.fill(); ctx.restore(); }
+
+// ---- the hero: Clawd, a square terracotta block with two tall eyes, side arms and four short legs
+function walker(x, y, r, o = {}) {
+  const key = o.key ?? 'hero', dark = !!o.dark, lc = dark ? PP.line : PP.ink;
+  const walk = o.walk ?? 0, ph = TT * TAU * walk;
+  y += Math.sin(TT * TAU * 0.9) * r * 0.03 - (walk ? Math.abs(Math.sin(ph)) * r * 0.06 : 0);   // idle bob, a hop when walking
+  SPARK_AT = toScreen(x, y);
+  const bw = r * 2, bh = r * 1.55, top = y - bh / 2, bot = y + bh / 2;
+  if (!dark) { ctx.fillStyle = 'rgba(60,45,30,0.13)'; ctx.beginPath(); ctx.ellipse(x, bot + r * 0.42, r * 1.15, r * 0.14, 0, 0, TAU); ctx.fill(); }
+  // legs: four short blocks, alternating when walking
+  for (let i = 0; i < 4; i++) {
+    const lx = x - bw / 2 + bw * (0.14 + i * 0.24), lift = walk ? Math.max(0, Math.sin(ph + (i % 2) * Math.PI)) * r * 0.12 : 0;
+    paint(rrectPts(lx - r * 0.07, bot - 4, r * 0.14, r * 0.36 - lift, 3), { fill: PP.terraD, key: key + 'lg' + i, w: Math.max(2, r * 0.045), amt: 0.3, line: lc });
+  }
+  // arms: small side nubs
+  for (const s of [-1, 1]) paint(rrectPts(s < 0 ? x - bw / 2 - r * 0.22 : x + bw / 2 - 2, y - r * 0.05, r * 0.24, r * 0.28, 4), { fill: PP.terra, key: key + 'arm' + s, w: Math.max(2, r * 0.045), amt: 0.3, line: lc });
+  const P = rrectPts(x - bw / 2, top, bw, bh, r * 0.12);
+  if (dark) { ink(P, { closed: true, color: 'rgba(240,150,110,0.18)', w: r * 0.5, key: key + 'g', amt: 0.4 }); }
+  paint(P, { fill: PP.terra, key, w: Math.max(2.6, r * 0.06), amt: 0.5, line: lc, tex: [{ k: 'pencil', c: '#e89a7a', al: 0.35, per: 60, dens: (px, py) => clamp((x - px + top + bh - py) / (2 * r)) }, { k: 'hatch', a: 0.8, gap: 5, al: 0.22, dens: (px, py) => clamp((px - x + py - y) / r) }] });
+  // eyes: two tall dark blocks; a blink now and then
+  const blink = (B + key.length * 7) % 41 < 2, eh = o.mood === 'wow' ? r * 0.36 : r * 0.3;
+  for (const s of [-1, 1]) { ctx.fillStyle = '#1d1712'; const ex = x + s * r * 0.42 - r * 0.07; if (blink) ctx.fillRect(ex, y - r * 0.1, r * 0.14, r * 0.05); else ctx.fillRect(ex, y - r * 0.08 - eh / 2, r * 0.14, eh); }
+  return P;
+}
+
+// =====================================================================
+//  STYLE — the renderer's hooks (see styles/cut-paper/kit.js for the contract)
+// =====================================================================
+const STYLE = {
+  name: 'paperprint',
+  paper: C.paper,
+  backdrop(c) { paint(box(-40, -40, W + 80, H + 80), { raw: true, line: false, fill: c, key: 'backdrop', tex: [{ k: 'pencil', c: '#fffaf0', al: 0.35, per: 700, a: -0.6 }] }); },
+  window(P, key, src) {   // the world seen through an inked hole with a hatched shadow
+    const Q = wobble(P, true, 2.5, key, 9);
+    ctx.save(); ctx.translate(10, 14); trace(Q, true); ctx.clip(); hatch(bbox(Q, 20), { key: key + 'sh', a: 0.8, gap: 5, al: 0.45 }); ctx.restore();
+    ctx.save(); trace(Q, true); ctx.clip(); ctx.drawImage(src, 0, 0); ctx.restore();
+    ink(P, { closed: true, w: 4.5, key: key + 'rim', double: true });
+  },
+  blob(P, c, key) { paint(P, { fill: c, key, w: 4, tex: [{ k: 'hatch', a: 0.8, gap: 6, al: 0.35 }, { k: 'pencil', c: '#fff6e0', al: 0.3, per: 80 }] }); },
+  hero(x, y, r, o) { walker(x, y, r * 0.6, { ...o, key: o.key }); },
+  heroColor: C.terra,
+  heroPts: (x, y, r) => ellipsePts(x, y, r * 0.6, r * 0.6, 0, 96),
+  post() { grain({ n: 1800, dark: 'rgba(70,45,25,0.08)', light: 'rgba(255,250,236,0.10)' }); },
+};
+// =====================================================================
+//  SCENES — projects-two. World 1920x1080; TT on 2s. Paper worlds and navy blueprint worlds cut hard.
+// =====================================================================
+const lt = (k) => TT - BEATS_T[k];
+const N = 11;
+const dial = (i, lab, dark) => progressDial((i + 1) / N, (i + 1) + ' · ' + lab, dark ? { dark: true } : {});
+function chip(str, x, y, fill, t, o = {}) {   // a paper chip that pops in, centred on x
+  const s = popS(t); if (s <= 0) return 0;
+  const w = sansW(str, o.size || 34) + 56, h = 70;
+  ctx.save(); ctx.translate(x, y); ctx.scale(s, s); ctx.rotate(o.rot || 0);
+  paint(rrectPts(-w / 2, -h / 2, w, h, 16), { fill, key: 'chip' + str, w: 2.8, amt: 0.5, line: PP.ink });
+  sansText(str, 0, 12, o.size || 34, PP.ink, { weight: 700, align: 'center' });
+  ctx.restore(); return w;
+}
+const THC = [PP.terra, '#7aa6d6', '#8fcf7a'];
+
+// ---- 1. hook: "Projects is for small business" gets crossed out (paper, blue)
+function sceneHook() {
+  const T0 = BEATS_T.hook;
+  stripeWorld('hook', 'blue');
+  paperCloud(180, 280, 0.9, 'h1'); paperCloud(1760, 300, 0.8, 'h2');
+  const s = popS(T0 + 0.3);
+  if (s > 0) {
+    ctx.save(); ctx.translate(960, 520); ctx.scale(s, s); ctx.translate(-960, -520);
+    const HP = rrectPts(340, 300, 1240, 420, 30); softShadow(HP, 'hk', 14, 18, 0.18); paint(HP, { fill: '#fbfaf6', key: 'hkc', w: 3.4, amt: 0.6, line: PP.ink });
+    sansText('Projects =', 960, 450, 92, PP.ink, { weight: 700, align: 'center' });
+    sansText('Cowork for non-tech people', 960, 570, 76, PP.ink, { weight: 600, align: 'center' });
+    ink([[430, 610], [1490, 610]], { w: 6, amt: 0.6, key: 'hku', color: '#7a9cc6', frac: ev(T0 + 0.8, 1.6) });
+    ctx.restore();
+  }
+  const x = ev(VW('hook', 'wrong') - 0.2, 0.35);
+  if (x > 0) {
+    ink([[380, 320], [1540, 700]], { w: 11, amt: 1, key: 'x1', frac: clamp(x * 2), color: PP.terra });
+    ink([[1540, 320], [380, 700]], { w: 11, amt: 1, key: 'x2', frac: clamp(x * 2 - 1), color: PP.terra });
+  }
+  const wr = ev(VW('hook', 'wrong') + 0.25, 0.5);
+  const pw = ev(VW('hook', 'powerful') - 0.4, 0.6);
+  if (wr > 0 && pw <= 0) handText('I was wrong.', 960 - handW('I was wrong.', 84, 700) / 2, 900, 84, PP.terraD, { key: 'wrong', weight: 700, rot: -0.02, frac: wr });
+  if (pw > 0) handText('much more powerful', 960 - handW('much more powerful', 84, 700) / 2, 900, 84, PP.ink, { key: 'pow', weight: 700, rot: -0.02, frac: pw });
+  walker(380, 860, 78, { key: 'hero', mood: wr > 0 ? 'wow' : 'smile' });
+  sceneLabel('my first take', T0 + 0.1);
+  dial(0, 'hook');
+}
+
+// ---- 2. harness: one project holds skills, rules, hooks (paper, green)
+function sceneHarness() {
+  const T0 = BEATS_T.harness;
+  stripeWorld('harness', 'green');
+  paperCloud(1700, 250, 0.8, 'g1');
+  const s = popS(T0 + 0.2);
+  if (s > 0) {
+    ctx.save(); ctx.translate(960, 560); ctx.scale(s, s); ctx.translate(-960, -560);
+    const P = rrectPts(420, 300, 1080, 560, 28);   // a project folder with a tab
+    softShadow(P, 'fold', 14, 18, 0.18);
+    paint([[420, 300], [700, 300], [740, 250], [420, 250]], { fill: '#e9b949', key: 'tab', w: 3, amt: 0.5, line: PP.ink });
+    paint(P, { fill: '#f4e3b0', key: 'fold', w: 3.4, amt: 0.6, line: PP.ink });
+    handText('Team OS', 480, 235, 56, PP.ink, { key: 'hos', weight: 700 });
+    ctx.restore();
+  }
+  [['skills', VW('harness', 'skills'), 690, '#c75b39'], ['rules', VW('harness', 'rules'), 960, '#7aa6d6'], ['hooks', VW('harness', 'hooks'), 1230, '#8fcf7a']].forEach(([n, t, x, c], i) => {
+    const a = ev(t, 0.4); if (a <= 0) return;
+    const k = EZ.back(a);
+    chip(n, x, lerp(160, 560, k), c, t, { size: 44, rot: [-0.03, 0.02, -0.02][i] });
+  });
+  if (TT > VW('harness', 'project')) sansText('one project', 960, 790, 36, PP.ink, { weight: 600, align: 'center', al: ev(VW('harness', 'project'), 0.4) });
+  const os = ev(VW('harness', 'os'), 0.4); if (os > 0) ink(ellipsePts(640, 222, 190, 56, 0, 40), { closed: true, w: 6, amt: 0.6, key: 'hosc', color: PP.terra, frac: os });
+  walker(300, 840, 70, { key: 'hero', mood: 'happy' });
+  sceneLabel('my whole harness', T0 + 0.1);
+  dial(1, 'harness');
+}
+
+// ---- 3. split: one goal, a main chat, parallel threads (blueprint)
+function sceneSplit() {
+  const T0 = BEATS_T.split, cx = 470, cy = 560;
+  blueprintWorld('split');
+  for (let k = 0; k < 2; k++) { const u = mod((TT - T0) * 0.6 + k * 0.5, 1), r = 110 + u * 260; bpLine(ellipsePts(cx, cy, r, r, 0, 90), { closed: true, w: 1.6, color: `rgba(174,185,236,${0.45 * (1 - u)})`, glow: 'rgba(0,0,0,0)' }); }
+  bpLine(ellipsePts(cx, cy, 110, 110, 0, 80), { closed: true, w: 2.4 });
+  sansText('main chat', cx, cy + 170, 30, PP.label, { weight: 600, align: 'center' });
+  walker(cx, cy, 62, { key: 'hero', dark: true });
+  const g = ev(T0 + 0.3, 0.5);   // the goal arrives
+  if (g > 0) { sansText('one goal', cx, cy - 200, 40, PP.gold, { weight: 700, align: 'center', al: g }); bpLine([[cx, cy - 170], [cx, cy - 118]], { w: 3, color: PP.gold, glow: 'rgba(242,198,109,0.3)', frac: g }); }
+  const th = VW('split', 'split');
+  ['thread 1', 'thread 2', 'thread 3'].forEach((n, i) => {
+    const y = [310, 560, 810][i], f = ev(th + i * 0.25, 0.7); if (f <= 0) return;
+    const P = []; for (let k = 0; k <= 30; k++) { const u = k / 30; P.push([lerp(cx + 110, 1330, u), lerp(cy, y, EZ.io(u))]); }
+    bpLine(P, { w: 2.4, frac: f });
+    if (f >= 1) {
+      const u = ((TT - th - 0.8 - i * 0.25) * 0.5) % 1, p = pointAt(P, u); if (p) glint(p[0], p[1], 9);
+      const w = bpPill(n, 1500, y, { size: 30 });
+      ctx.fillStyle = THC[i]; ctx.beginPath(); ctx.arc(1500 + w / 2 + 30, y, 10, 0, TAU); ctx.fill();
+    }
+  });
+  if (TT > VW('split', 'parallel')) sansText('in parallel', 1500, 930, 34, PP.gold, { weight: 600, align: 'center', al: ev(VW('split', 'parallel'), 0.4) });
+  sceneLabel('one goal, many threads', T0 + 0.1, { dark: true });
+  dial(2, 'split', true);
+}
+
+// ---- 4. session: own branch, in the cloud, laptop closed, local on request (blueprint)
+function cloudPts(cx, cy, s) { return [[-210, 60], [-250, -10], [-170, -70], [-110, -120], [-20, -150], [70, -120], [130, -140], [220, -80], [250, 0], [210, 60]].map(([x, y]) => [cx + x * s, cy + y * s]); }
+function sceneSession() {
+  const T0 = BEATS_T.session;
+  blueprintWorld('session');
+  // the cloud with a thread running inside
+  const cc = popS(T0 + 0.3), cx = 1060, cy = 400;
+  if (cc > 0) {
+    ctx.save(); ctx.translate(cx, cy); ctx.scale(cc, cc); ctx.translate(-cx, -cy);
+    const P = cloudPts(cx, cy, 1.9); trace(P, true); ctx.fillStyle = 'rgba(30,40,85,0.9)'; ctx.fill(); bpLine(P, { closed: true, w: 2.8 });
+    bpPill('own branch', cx - 150, cy - 150, { size: 34 });
+    ['thread 1 · own session', 'editing skills', 'tests passing'].forEach((s, i) => monoText(s, cx - 330, cy - 40 + i * 58, 36, i === 2 ? PP.cyan : PP.label, { key: 'cl' + i, count: Math.floor(clamp((TT - T0 - 0.8 - i * 0.6) / 0.5) * s.length) }));
+    ctx.restore();
+    sansText('in the cloud', cx, cy + 260, 44, PP.gold, { weight: 600, align: 'center', al: ev(VW('session', 'cloud'), 0.4) });
+  }
+  // the laptop closes on "laptop"
+  const lx = 460, ly = 800, close = ev(VW('session', 'laptop'), 0.5);
+  paint(rrectPts(lx - 150, ly, 300, 26, 8), { fill: '#2a3566', key: 'lapb', w: 2.4, amt: 0.3, line: PP.line });
+  const ang = lerp(1.0, 0, EZ.io(close)), lh = 200 * Math.sin(ang) + 4;
+  bpLine(rrectPts(lx - 130, ly - lh, 260, lh, 10), { closed: true, w: 2.6, color: PP.label });
+  if (close >= 1) { sansText('z z z', lx + 160, ly - 40, 44, PP.label, { weight: 600, al: 0.8 }); }
+  // work keeps going: a pulse from the cloud, and a phone check-in
+  if (close >= 1) {
+    const u = mod((TT - VW('session', 'laptop')) * 0.7, 1);
+    bpLine([[cx - 120, cy + 150], [lx + 100, ly - 40]], { w: 2, dash: [10, 8], color: 'rgba(174,185,236,0.5)', glow: 'rgba(0,0,0,0)' });
+    glint(lerp(cx - 120, lx + 100, u), lerp(cy + 150, ly - 40, u), 8);
+    const pa = ev(VW('session', 'keeps') + 0.2, 0.5);
+    if (pa > 0) { bpLine(rrectPts(1480, 540, 250, 400, 30), { closed: true, w: 3, frac: pa }); sansText('thread 1', 1605, 680, 34, PP.label, { weight: 600, align: 'center', al: pa }); sansText('running', 1605, 740, 34, PP.cyan, { weight: 700, align: 'center', al: pa }); sansText('check in', 1605, 990, 40, PP.gold, { weight: 700, align: 'center', al: pa }); }
+  }
+  // local files on request
+  const lo = ev(VW('session', 'local'), 0.5);
+  if (lo > 0) { bpPill('local files', 760, 960, { size: 38 }); bpLine([[1000, 560], [900, 760], [lx + 80, ly - 30]], { w: 3, color: PP.gold, glow: 'rgba(242,198,109,0.3)', frac: lo }); }
+  walker(220, 800, 54, { key: 'hero', dark: true });
+  sceneLabel('every thread is a full session', T0 + 0.1, { dark: true });
+  dial(3, 'session', true);
+}
+
+// ---- 5. pull request: a thread opens it, watches it, fixes CI (paper, rose)
+function scenePR() {
+  const T0 = BEATS_T.pr;
+  stripeWorld('pr', 'rose');
+  paperCloud(1700, 230, 0.8, 'p1');
+  const s = popS(T0 + 0.3), x = 520, y = 240, w = 880, h = 640;
+  if (s > 0) {
+    ctx.save(); ctx.translate(x + w / 2, y + h / 2); ctx.scale(s, s); ctx.translate(-(x + w / 2), -(y + h / 2));
+    const P = rrectPts(x, y, w, h, 26);
+    softShadow(P, 'pr', 14, 18, 0.18); paint(P, { fill: '#fbfaf6', key: 'pr', w: 3.4, amt: 0.6, line: PP.ink });
+    sansText('Pull request', x + 44, y + 80, 44, PP.ink, { weight: 700 });
+    chip('open', x + w - 110, y + 64, '#8fcf7a', T0 + 0.8, { size: 28 });
+    ['a thread opened this', TT > VW('pr', 'answers') + 0.4 ? 'review comments: resolved' : 'review comments: 1'].forEach((t, i) => sansText(t, x + 44, y + 170 + i * 66, 40, 'rgba(43,38,34,0.75)', { weight: 600 }));
+    // CI row: red, then green after "fix"
+    const fix = VW('pr', 'fix'), ok = TT > fix + 0.8;
+    { const cd = ev(fix - 0.1, 0.7); if (cd > 0 && cd < 1) { ctx.fillStyle = PP.terra; ctx.beginPath(); ctx.arc(lerp(x - 80, x + 300, EZ.io(cd)), y + 385, 16, 0, TAU); ctx.fill(); } }
+    paint(rrectPts(x + 44, y + 340, w - 88, 90, 16), { fill: ok ? '#e4f2d8' : '#f8dcd5', key: 'ci', w: 2.8, amt: 0.5, line: PP.ink });
+    sansText('CI', x + 80, y + 398, 36, PP.ink, { weight: 700 });
+    if (ok) { ink([[x + 560, y + 388], [x + 590, y + 416], [x + 650, y + 350]], { w: 9, amt: 0.6, key: 'ck', color: '#3f7a2c', frac: ev(fix + 0.8, 0.3) }); sansText('passing', x + 690, y + 398, 36, '#3f7a2c', { weight: 700 }); }
+    else { ink([[x + 560, y + 358], [x + 620, y + 418]], { w: 9, amt: 0.6, key: 'cx1', color: PP.terraD }); ink([[x + 620, y + 358], [x + 560, y + 418]], { w: 9, amt: 0.6, key: 'cx2', color: PP.terraD }); sansText('failing', x + 690, y + 398, 36, PP.terraD, { weight: 700 }); }
+    sansText('thread pushes the fix', x + 44, y + 540, 40, PP.ink, { weight: 600, al: ev(fix, 0.4) });
+    ctx.restore();
+  }
+  // watching eye
+  const e = ev(VW('pr', 'watches'), 0.4);
+  if (e > 0) { ink(ellipsePts(1560, 420, 90, 52, 0, 40), { closed: true, w: 5, amt: 0.6, key: 'eye', color: PP.ink, frac: e }); ctx.fillStyle = PP.terra; ctx.beginPath(); ctx.arc(1560 + Math.sin(TT * 1.3) * 12, 420, 20, 0, TAU); ctx.fill(); sansText('watching', 1560, 540, 44, PP.ink, { weight: 600, align: 'center', al: e }); }
+  const several = ev(VW('pr', 'several'), 0.4);   // "several PRs": small stack builds up
+  for (let i = 0; i < 4; i++) { const a = ev(VW('pr', 'several') + i * 0.25, 0.3); if (a > 0) chip('PR', 1440 + i * 120, 760 + (i % 2) * 18, '#fbfaf6', VW('pr', 'several') + i * 0.25, { size: 40, rot: [-0.05, 0.04, -0.03, 0.05][i] }); }
+  walker(260, 860, 70, { key: 'hero', mood: 'happy' });
+  sceneLabel('it opens the PR and fixes CI', T0 + 0.1);
+  dial(4, 'pull requests');
+}
+
+// ---- 6. library and routine (paper, yellow)
+function sceneLibrary() {
+  const T0 = BEATS_T.library;
+  stripeWorld('library', 'yellow');
+  paperCloud(220, 240, 0.8, 'l1');
+  const s = popS(T0 + 0.3), x = 700, y = 330, w = 520, h = 430;
+  if (s > 0) {
+    ctx.save(); ctx.translate(x + w / 2, y + h / 2); ctx.scale(s, s); ctx.translate(-(x + w / 2), -(y + h / 2));
+    paint([[x, y], [x + 200, y], [x + 240, y - 50], [x, y - 50]], { fill: '#e9b949', key: 'lt', w: 3, amt: 0.5, line: PP.ink });
+    paint(rrectPts(x, y, w, h, 24), { fill: '#f4e3b0', key: 'lib', w: 3.4, amt: 0.6, line: PP.ink });
+    handText('Library', x + 40, y + 70, 56, PP.ink, { key: 'lib', weight: 700 });
+    docCard(x + 50, y + 110, 200, 270, 'files', { key: 'lr', accent: '#c75b39', lines: 5, rot: -0.04, size: 26 });
+    docCard(x + 270, y + 130, 200, 250, 'output', { key: 'ls', accent: '#3f7a8c', lines: 4, rot: 0.04, size: 24 });
+    ctx.restore();
+  }
+  // three threads read from it
+  const r = VW('library', 'thread');
+  [0, 1, 2].forEach((i) => {
+    const a = ev(r + i * 0.2, 0.6); if (a <= 0) return;
+    const y0 = [380, 540, 700][i];
+    ink([[1260, y0], [1400, y0 + (i - 1) * 30], [1500, y0 + (i - 1) * 40]], { w: 5, amt: 0.8, key: 'rl' + i, color: THC[i], frac: a });
+    paint(ellipsePts(1560, y0 + (i - 1) * 40, 44, 44, 0, 28), { fill: THC[i], key: 'rd' + i, w: 2.6, amt: 0.4, line: PP.ink }); sansText('thread ' + (i + 1), 1630, y0 + (i - 1) * 40 + 12, 38, PP.ink, { weight: 700 });
+  });
+  // the daily routine: a clock, then a new thread opens on "regresses"
+  const c = ev(VW('library', 'daily'), 0.5);
+  if (c > 0) {
+    ink(ellipsePts(340, 760, 90, 90, 0, 40), { closed: true, w: 6, amt: 0.6, key: 'clk', color: PP.ink, frac: c });
+    const ha = TT * 1.2; ink([[340, 760], [340 + Math.cos(ha) * 60, 760 + Math.sin(ha) * 60]], { w: 6, amt: 0.2, key: 'hand', color: PP.terraD });
+    sansText('every day', 340, 900, 44, PP.ink, { weight: 600, align: 'center', al: c });
+  }
+  const rg = ev(VW('library', 'regression'), 0.5);
+  if (rg > 0) { ink([[450, 740], [560, 700], [640, 660]], { w: 4, amt: 0.6, key: 'ra', color: PP.terraD, frac: rg }); chip('new thread', 900, 880, '#f8dcd5', VW('library', 'regression'), { size: 44, rot: 0.02 }); }
+  sceneLabel('shared library, daily routine', T0 + 0.1);
+  dial(5, 'library');
+}
+
+// ---- 7. tips intro: the Threads tab, nothing waiting (paper, blue). Redrawn with generic titles; the real screenshot shows private names.
+function sceneTips() {
+  const T0 = BEATS_T.tips;
+  stripeWorld('tips', 'blue');
+  paperCloud(260, 220, 0.8, 't1c');
+  const x = 880, y = 130, w = 880, h = 830, s = popS(T0 + 0.3);
+  if (s > 0) {
+    ctx.save(); ctx.translate(x + w / 2, y + h / 2); ctx.scale(s, s); ctx.translate(-(x + w / 2), -(y + h / 2));
+    const P = rrectPts(x, y, w, h, 28); softShadow(P, 'tp', 14, 18, 0.18); paint(P, { fill: '#fbfaf6', key: 'tp', w: 3.4, amt: 0.6, line: PP.ink });
+    sansText('Welcome back.', x + 44, y + 90, 56, PP.ink, { weight: 700 });
+    sansText('Nothing is waiting on you.', x + 44, y + 142, 36, 'rgba(43,38,34,0.6)', { weight: 400 });
+    const groups = [['Waiting on you', '0', []], ['Idle', '2', ['hooks setup', 'skills cleanup']], ['Resolved', '7', ['rules draft', 'release notes', 'PR fixes']]];
+    let yy = y + 200;
+    groups.forEach(([g, n, rows], gi) => {
+      const a = ev(T0 + 0.8 + gi * 0.35, 0.3); if (a <= 0) return;
+      ctx.save(); ctx.globalAlpha = a;
+      paint(rrectPts(x + 28, yy, w - 56, 62, 14), { fill: '#eeece4', key: 'gh' + gi, w: 2, amt: 0.4, line: 'rgba(43,38,34,0.25)' });
+      sansText(g, x + 56, yy + 44, 38, PP.ink, { weight: 600 }); monoText(n, x + 56 + sansW(g, 38) + 24, yy + 44, 36, PP.label === '#e6eaff' ? PP.terraD : 'rgba(43,38,34,0.6)', { key: 'gn' + gi });
+      yy += 84;
+      rows.forEach((r, ri) => { sansText(r, x + 56, yy + 38, 38, gi === 2 ? 'rgba(43,38,34,0.5)' : PP.ink, { weight: 500 }); monoText(gi === 2 ? '3d' : '1h', x + w - 120, yy + 38, 34, 'rgba(43,38,34,0.45)', { key: 'gt' + gi + ri }); yy += 76; });
+      yy += 14;
+      ctx.restore();
+    });
+    ctx.restore();
+  }
+  chip('3 tips', 400, 560, '#fbfaf6', T0 + 0.5, { size: 54, rot: -0.03 });
+  walker(260, 860, 74, { key: 'hero', mood: 'smile' });
+  sceneLabel('managing the coordinator', T0 + 0.1);
+  dial(6, 'tips');
+}
+
+// ---- 8. tip 1: coordinator low, threads smaller model (blueprint)
+function sceneT1() {
+  const T0 = BEATS_T.t1;
+  blueprintWorld('t1');
+  sansText('1', 200, 230, 120, PP.gold, { weight: 700 });
+  // the coordinator with an effort slider set to low
+  const cx = 560, cy = 560;
+  bpLine(ellipsePts(cx, cy, 120, 120, 0, 80), { closed: true, w: 2.6 });
+  walker(cx, cy, 66, { key: 'hero', dark: true });
+  sansText('coordinator', cx, cy + 190, 40, PP.label, { weight: 600, align: 'center' });
+  const sy = 330; bpLine([[cx - 160, sy], [cx + 160, sy]], { w: 3, color: PP.lineD });
+  const k = ev(VW('t1', 'low') - 0.2, 0.5), kx = lerp(cx + 150, cx - 140, EZ.io(k));
+  ctx.fillStyle = PP.gold; ctx.beginPath(); ctx.arc(kx, sy, 16, 0, TAU); ctx.fill();
+  sansText('effort: low', cx, sy - 40, 46, PP.gold, { weight: 700, align: 'center' });
+  // three threads, each on a smaller model
+  const th = VW('t1', 'smaller');
+  [300, 560, 820].forEach((y, i) => {
+    const f = ev(th - 0.5 + i * 0.2, 0.6); if (f <= 0) return;
+    const P = []; for (let q = 0; q <= 24; q++) { const u = q / 24; P.push([lerp(cx + 120, 1250, u), lerp(cy, y, EZ.io(u))]); }
+    bpLine(P, { w: 2.4, frac: f });
+    if (f >= 1) { bpPill('thread ' + (i + 1), 1380, y, { size: 36 }); bpPill('smaller model', 1700, y, { size: 32 }); }
+  });
+  // plan limits: a meter that fills as threads run
+  const m = 1, mw = 520; bpLine(rrectPts(700, 960, mw, 22, 11), { closed: true, w: 2, color: PP.lineD, glow: 'rgba(0,0,0,0)' });
+  const fr = TT < th ? lerp(0.15, 0.9, ev(T0 + 0.5, 3.5)) : lerp(0.9, 0.4, ev(th, 1.2)); ctx.fillStyle = PP.cyan; ctx.fillRect(704, 964, (mw - 8) * fr * m, 14);
+  sansText('plan limits used', 700, 1012, 36, PP.label, { weight: 500 });
+  sceneLabel('tip 1: low effort coordinator', T0 + 0.1, { dark: true });
+  dial(7, 'tip 1', true);
+}
+
+// ---- 9. tip 2: tell it how to work (paper, green)
+function sceneT2() {
+  const T0 = BEATS_T.t2;
+  stripeWorld('t2', 'green');
+  sansText('2', 200, 230, 120, PP.terraD, { weight: 700 });
+  const x = 560, y = 220, w = 1000, h = 640, s = popS(T0 + 0.3);
+  if (s > 0) {
+    ctx.save(); ctx.translate(x + w / 2, y + h / 2); ctx.scale(s, s); ctx.translate(-(x + w / 2), -(y + h / 2));
+    const P = rrectPts(x, y, w, h, 28); softShadow(P, 't2', 14, 18, 0.18); paint(P, { fill: '#fbfaf6', key: 't2', w: 3.4, amt: 0.6, line: PP.ink });
+    sansText('how I want you to work', x + 50, y + 90, 44, PP.ink, { weight: 700 });
+    [['threads at once', '3', VW('t2', 'many')], ['update me', 'daily', VW('t2', 'often')], ['show a plan first', 'on', VW('t2', 'plan')]].forEach(([l, v, t], i) => {
+      const a = ev(t, 0.35); if (a <= 0) return;
+      ctx.save(); ctx.globalAlpha = a;
+      const yy = y + 200 + i * 130;
+      sansText(l, x + 60, yy + 20, 38, PP.ink, { weight: 500 });
+      paint(rrectPts(x + w - 260, yy - 30, 200, 70, 35), { fill: i === 2 ? '#8fcf7a' : '#f1e6cd', key: 'tg' + i, w: 2.8, amt: 0.4, line: PP.ink });
+      sansText(v, x + w - 160, yy + 20, 34, PP.ink, { weight: 700, align: 'center' });
+      ctx.restore();
+    });
+    ctx.restore();
+  }
+  walker(300, 860, 70, { key: 'hero', mood: 'happy' });
+  sceneLabel('tip 2: say how you want it', T0 + 0.1);
+  dial(8, 'tip 2');
+}
+
+// ---- 10. tip 3: threads share memory (blueprint)
+function sceneT3() {
+  const T0 = BEATS_T.t3, cx = 960, cy = 520;
+  blueprintWorld('t3');
+  sansText('3', 200, 230, 120, PP.gold, { weight: 700 });
+  const m = popS(T0 + 0.3);
+  if (m > 0) { ctx.save(); ctx.translate(cx, cy); ctx.scale(m, m); ctx.translate(-cx, -cy); const P = rrectPts(cx - 260, cy - 90, 520, 180, 30); trace(P, true); ctx.fillStyle = 'rgba(14,20,45,0.95)'; ctx.fill(); bpLine(P, { closed: true, w: 2.8, color: PP.gold, glow: 'rgba(242,198,109,0.25)' }); sansText('shared memory', cx, cy - 6, 48, PP.label, { weight: 700, align: 'center' }); sansText('always show a plan first', cx, cy + 50, 34, PP.gold, { weight: 500, align: 'center' }); ctx.restore(); }
+  const pr = T0 + 0.3;
+  [[360, 860], [960, 880], [1560, 860]].forEach(([x, y], i) => {
+    const f = ev(pr + 0.2 + i * 0.25, 0.7); if (f <= 0) return;
+    const P = []; for (let q = 0; q <= 24; q++) { const u = q / 24; P.push([lerp(cx, x, u), lerp(cy + 90, y - 50, EZ.io(u))]); }
+    bpLine(P, { w: 2.4, frac: f });
+    if (f >= 1) { const u = ((TT - pr - 1 - i * 0.2) * 0.6) % 1, p = pointAt(P, u); if (p) glint(p[0], p[1], 9); bpPill('thread ' + (i + 1), x, y, { size: 36 }); ctx.fillStyle = THC[i]; ctx.beginPath(); ctx.arc(x + 110, y, 9, 0, TAU); ctx.fill(); }
+  });
+  walker(240, 780, 54, { key: 'hero', dark: true });
+  sceneLabel('tip 3: threads share memory', T0 + 0.1, { dark: true });
+  dial(9, 'tip 3', true);
+}
+
+// ---- 11. close: no clear verdict, more often (paper, blue)
+function sceneClose() {
+  const T0 = BEATS_T.close;
+  stripeWorld('close', 'blue');
+  paperCloud(220, 260, 0.9, 'c1'); paperCloud(1700, 300, 0.8, 'c2');
+  const a = ev(T0 + 0.3, 0.6), b = ev(VW('close', 'more') - 0.3, 0.6);
+  paint(rrectPts(360, 330, 1200, 380, 28), { fill: PP.paper, key: 'cl', w: 3.4, amt: 0.6, line: PP.ink });
+  handText('No clear verdict yet.', 960 - handW('No clear verdict yet.', 84, 700) / 2, 480, 84, PP.ink, { key: 'v1', weight: 700, frac: a });
+  handText('I will use it more.', 960 - handW('I will use it more.', 84, 700) / 2, 620, 84, PP.terraD, { key: 'v2', weight: 700, frac: b });
+  chip('Beta · Pro and Max', 1330, 840, '#fbfaf6', VW('close', 'beta'), { size: 44, rot: -0.02 });
+  { const nt = ev(VW('close', 'team') + 0.1, 0.4); if (nt > 0) sansText('not Team or Enterprise yet', 1330, 930, 36, PP.ink, { weight: 600, align: 'center', al: nt }); }
+  walker(560, 860, 70, { key: 'hero', mood: 'happy' });
+  dial(10, 'verdict');
+}
+
+// ---- end card
+function sceneEnd() {
+  stripeWorld('end', 'blue');
+  paperCloud(260, 260, 0.8, 'e1'); paperCloud(1680, 330, 0.9, 'e2');
+  const a = ev(BEATS_T.end + 0.15, 0.5);
+  ctx.save(); ctx.globalAlpha = a;
+  paint(rrectPts(460, 380, 1000, 200, 24), { fill: PP.paper, key: 'endc', w: 3.4, amt: 0.6, line: PP.ink });
+  sansText('Projects, second look', W / 2, 500, 68, PP.ink, { weight: 700, align: 'center' });
+  ctx.restore();
+  walker(W / 2, 760, 70, { key: 'hero', mood: 'happy' });
+}
+// =====================================================================
+//  ERAS, CAMERAS, BRIDGES — projects-two. Hard cuts only (BRIDGES = []).
+// =====================================================================
+const ERA_BG = ['#ede5cc', '#ede5cc', '#0e142d', '#0e142d', '#ede5cc', '#ede5cc', '#ede5cc', '#0e142d', '#ede5cc', '#0e142d', '#ede5cc', '#ede5cc'];
+// a slow push-in across every beat, towards where the action is
+const FOCUS = Array.from({ length: 12 }, () => [960, 560]);
+function pieceCam(era, t) { const [a, b] = ERA_LIST[era]; return push(t, a, b, { z: 1.08, p: FOCUS[era], to: FOCUS[era] }); }
+const BRIDGES = [];
+
+// =====================================================================
+//  kit/morph.js — the renderer for pieces built from ERAS (scenes) joined by SHAPE MORPHS.
+//
+//  At each bridge time tc:
+//    shrink [tc-d, tc-m]      the old era is seen through a window shaped like the bridge object (STYLE.window),
+//                             shrinking onto the object while the backdrop fades to blank paper
+//    morph  [tc-m, tc+m]      on blank paper, the object's outline blends into its counterpart's
+//                             (both resampled by angle around their centroids; colour lerped). Hero-to-hero
+//                             bridges draw the hero itself with blended position, size and ray count.
+//    grow   [tc+m, tc+d]      the new era opens out of a window shaped like the counterpart
+//    d = the bridge's half-length (default 0.6s, so a bridge costs 1.2s), m = the morph's half (default 0.2s, or d/3 when d is set).
+//    Short pieces: { tc, d: 0.4 } (0.8s) or fewer bridges — see craft.md -> Transitions.
+//  Era boundaries WITHOUT a bridge are hard cuts (keep at most one: the slam).
+//
+//  The piece defines (in its head / src):
+//    ERA_LIST = [[t0, t1, () => drawScene()], ...]      scenes draw in world coords, call yearTag()/capStrip()
+//    ERA_BG   = ['#hex', ...]                          each era's dominant colour (for the fade to paper)
+//    BRIDGES  = [{ tc, A: () => shape, B: () => shape, d?, m? }]   shape = { P: points, c: '#hex' } or SP(x, y, r, rays)
+//    function pieceCam(era, t) { return null | CAM }   optional; use push() / bump() below
+//  Shapes are in each era's world coords; the bridge object must be in frame at tc (pull push-ins back first).
+//  The look comes from the style kit's STYLE hooks (paper, backdrop, window, blob, hero, post, ones):
+//  this file draws nothing itself, so the same piece structure works in any style.
+// =====================================================================
+// ---- cameras: CAM = { z, tx, ty }; camOf({ z, p, to }) puts world point p on screen point to
+const CAM0 = { z: 1, tx: 0, ty: 0 };
+const camOf = (c) => ({ z: c.z, tx: c.to[0] - c.z * c.p[0], ty: c.to[1] - c.z * c.p[1] });
+const camMix = (a, b, u) => ({ z: lerp(a.z, b.z, u), tx: lerp(a.tx, b.tx, u), ty: lerp(a.ty, b.ty, u) });
+// an eased push-in over [a, b] to cam, optionally pulled back over [oa, ob]
+function push(t, a, b, cam, oa, ob) { let u = EZ.io(seg(t, a, b)); if (oa != null) u *= 1 - EZ.io(seg(t, oa, ob)); return u > 0 ? camMix(CAM0, camOf(cam), u) : null; }
+// a zoom bump on every beat from t0, centred on point p (the hero keeps its screen spot)
+function bump(t, t0, p, amt = 0.3, every = 0.5) { return camOf({ z: 1 + amt * Math.exp(-mod(t - t0, every) * 7), p, to: p }); }
+function camAt(era, t) { return (typeof pieceCam === 'function' && pieceCam(era, t)) || CAM0; }
+const camPts = (P, c) => P.map(([x, y]) => [c.z * x + c.tx, c.z * y + c.ty]);
+// ---- bridge shapes
+function starPts(x, y, r, n, r0 = -Math.PI / 2, m = 96) {
+  const P = []; for (let i = 0; i < m; i++) { const a = i / m * TAU, k = 0.42 + 0.58 * (0.5 + 0.5 * Math.cos(n * (a - r0))) ** 3; P.push([x + Math.cos(a) * r * k, y + Math.sin(a) * r * k]); }
+  return P;
+}
+const SP = (x, y, r, n) => ({ spark: [x, y, r, n] });
+const shapeOf = (s) => (s.spark ? { P: (STYLE.heroPts || starPts)(...s.spark), c: STYLE.heroColor, spark: s.spark } : s);
+function byAngle(P, m = 96) {   // resample a closed outline to m points by angle around its centroid
+  const c = P.reduce((a, p) => [a[0] + p[0] / P.length, a[1] + p[1] / P.length], [0, 0]), Q = resample(P, true, 4), out = [];
+  for (let i = 0; i < m; i++) {
+    const a = -Math.PI + i / m * TAU; let best = null, bd = 1e9;
+    for (const q of Q) { let d = Math.atan2(q[1] - c[1], q[0] - c[0]) - a; d = Math.abs(Math.atan2(Math.sin(d), Math.cos(d))); const r = Math.hypot(q[0] - c[0], q[1] - c[1]); if (d < bd - 1e-4 || (Math.abs(d - bd) < 1e-4 && r > best[2])) { bd = d; best = [q[0], q[1], r]; } }
+    out.push([best[0], best[1]]);
+  }
+  return { P: out, c };
+}
+const mixHex = (a, b, u) => { const p = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16)); const x = p(a), y = p(b); return `rgb(${x.map((v, i) => Math.round(lerp(v, y[i], u))).join(',')})`; };
+function maskK(P) {   // how far the window must scale about its centroid to cover the frame
+  const c = P.reduce((a, p) => [a[0] + p[0] / P.length, a[1] + p[1] / P.length], [0, 0]);
+  const rmin = Math.max(8, Math.min(...byAngle(P, 48).P.map((p) => Math.hypot(p[0] - c[0], p[1] - c[1]))));
+  const far = Math.max(...[[0, 0], [W, 0], [0, H], [W, H]].map((q) => Math.hypot(q[0] - c[0], q[1] - c[1])));
+  return { c, kmax: far / rmin * 1.1 };
+}
+const scaled = (P, c, k) => P.map(([x, y]) => [c[0] + (x - c[0]) * k, c[1] + (y - c[1]) * k]);
+// ---- layers and windows
+const LAYER = [];
+function layer(i) { if (!LAYER[i]) { const c = document.createElement('canvas'); c.width = W; c.height = H; LAYER[i] = c; } return LAYER[i]; }
+function renderEra(e, target) {   // draws era e into target; returns its overlay queue (year tag, caption)
+  const saved = ctx; ctx = target.getContext('2d');
+  ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.filter = 'none'; ctx.setLineDash([]);
+  ctx.fillStyle = STYLE.paper; ctx.fillRect(0, 0, W, H);   // a clean sheet every frame: nothing carries over between frames
+  const cam = camAt(e, TT); ctx.setTransform(cam.z, 0, 0, cam.z, cam.tx, cam.ty);
+  DEFER = []; ERA_LIST[e][2](); const q = DEFER; DEFER = null;
+  ctx.restore(); ctx = saved;
+  return q;
+}
+function flush(q, e) { const keep = E0; E0 = ERA_LIST[e][0]; ctx.setTransform(1, 0, 0, 1, 0, 0); q.forEach((f) => f()); E0 = keep; }
+function shotAtFrame(fr) {
+  for (const s of TIMELINE.shots) if (fr >= Math.round(s.t0 * FPS) && fr < Math.round(s.t1 * FPS)) return s;
+  return TIMELINE.shots[TIMELINE.shots.length - 1];
+}
+const eraAt = (t) => ERA_LIST.findIndex(([a, b]) => t >= a - 1e-6 && t < b - 1e-6);
+// renderFrame(t, canvas, sub): sub = true draws the exact time t between frames (motion blur sub-frames, styles on 1s)
+function renderFrame(t, canvas, sub) {
+  const cv = canvas || document.getElementById('c');
+  ctx = cv.getContext('2d');
+  F = ((Math.floor(sub ? t * FPS + 1e-6 : Math.round(t * FPS)) % NFRAMES) + NFRAMES) % NFRAMES;
+  B = Math.floor(F / 2);
+  TT = (STYLE.ones ? (sub ? F + (t * FPS - Math.floor(t * FPS + 1e-6)) : F) : B * 2) / FPS;
+  // the era is picked by the real frame, so a cut on an odd frame (a 16th at 24fps) lands on that frame;
+  // on its first frame the new era is drawn at its own start time (motion stays on 2s inside it)
+  const s = shotAtFrame(F), e = Math.max(0, eraAt(F / FPS));
+  E0 = ERA_LIST[e][0];
+  if (TT < E0 - 1e-6) TT = E0;
+  ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over'; ctx.setLineDash([]); ctx.filter = 'none';
+  SPARK_AT = null;
+  const bd = (r) => r.d ?? 0.6, bm = (r) => r.m ?? (r.d != null ? r.d / 3 : 0.2);
+  const tr = BRIDGES.find((r) => TT >= r.tc - bd(r) - 1e-6 && TT < r.tc + bd(r) - 1e-6);
+  if (!tr) {
+    const q = renderEra(e, layer(0)); ctx.drawImage(layer(0), 0, 0); flush(q, e);
+  } else {
+    const ea = eraAt(tr.tc - 0.01), eb = eraAt(tr.tc + 0.01);
+    const sa = shapeOf(tr.A()), sb = shapeOf(tr.B());
+    const PA = camPts(sa.P, camAt(ea, TT)), PB = camPts(sb.P, camAt(eb, TT));
+    const D = bd(tr), M = bm(tr);
+    if (TT < tr.tc - M) {
+      const u = EZ.i2(seg(TT, tr.tc - D, tr.tc - M)), { c, kmax } = maskK(PA), k = Math.exp(lerp(Math.log(kmax), 0, u));
+      STYLE.backdrop(mixHex(ERA_BG[ea], STYLE.paper, 0.5 + u * 0.5), { eraA: ea, eraB: eb, u, phase: 'shrink' });
+      const q = renderEra(ea, layer(0));
+      STYLE.window(scaled(PA, c, k), 'mA' + tr.tc, layer(0), { c: sa.c, u, phase: 'shrink', eraA: ea, eraB: eb });
+      flush(q, ea);
+    } else if (TT < tr.tc + M) {
+      const u = EZ.io(seg(TT, tr.tc - M, tr.tc + M));
+      STYLE.backdrop(STYLE.paper, { eraA: ea, eraB: eb, u, phase: 'morph' });
+      if (sa.spark && sb.spark) {
+        const ca = camAt(ea, TT), cb = camAt(eb, TT), [ax, ay] = camPts([sa.spark.slice(0, 2)], ca)[0], [bx, by] = camPts([sb.spark.slice(0, 2)], cb)[0];
+        STYLE.hero(lerp(ax, bx, u), lerp(ay, by, u), lerp(sa.spark[2] * ca.z, sb.spark[2] * cb.z, u), { rays: Math.round(lerp(sa.spark[3], sb.spark[3], u)), mood: 'wow', key: 'morphspark' });
+      } else {
+        const A2 = byAngle(PA), B2 = byAngle(PB), M = A2.P.map((p, i) => [lerp(p[0], B2.P[i][0], u), lerp(p[1], B2.P[i][1], u)]);
+        STYLE.blob(M, mixHex(sa.c, sb.c, u), 'morph' + tr.tc, u, { eraA: ea, eraB: eb, phase: 'morph' });
+        if (sb.spark && u > 0.6) STYLE.hero(...camPts([sb.spark.slice(0, 2)], camAt(eb, TT))[0], sb.spark[2] * clamp((u - 0.6) / 0.4), { rays: sb.spark[3], mood: 'wow', key: 'morphspark2' });
+      }
+    } else {
+      const u = EZ.o2(seg(TT, tr.tc + M, tr.tc + D)), { c, kmax } = maskK(PB), k = Math.exp(lerp(0, Math.log(kmax), u));
+      STYLE.backdrop(mixHex(STYLE.paper, ERA_BG[eb], u * 0.5), { eraA: ea, eraB: eb, u, phase: 'grow' });
+      const q = renderEra(eb, layer(0));
+      STYLE.window(scaled(PB, c, k), 'mB' + tr.tc, layer(0), { c: sb.c, u, phase: 'grow', eraA: ea, eraB: eb });
+      flush(q, eb);
+    }
+  }
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  if (STYLE.post) STYLE.post();
+  ctx.restore();
+  return s.id;
+}
+window.renderFrame = renderFrame;
+window.anchorAt = () => (SPARK_AT ? { x: SPARK_AT[0], y: SPARK_AT[1] } : null);
+
+// =====================================================================
+//  kit/board.js — the storyboard: every beat in TIMELINE.board drawn as a 9:16 key frame with its notes.
+//  The panels ARE the piece: each one is renderFrame(t) at the beat's key time, so an approved board
+//  carries straight into the video.  TIMELINE.board = [{ t, title, sound, next }]
+//  Render: node tools/storyboard.mjs <piece dir> [out.png] [panel numbers...]
+// =====================================================================
+function drawPanel(k) { renderFrame(TIMELINE.board[k].t, ctx.canvas); }
+function renderBoard() {
+  const BD = TIMELINE.board || [], COLS = 5, PW = 360, PH = Math.round(PW * H / W), GAP = 30, NOTE = 130, HEAD = 150;
+  const rows = Math.ceil(BD.length / COLS), bc = document.createElement('canvas');
+  bc.width = GAP + COLS * (PW + GAP); bc.height = HEAD + rows * (PH + NOTE + GAP);
+  const g = bc.getContext('2d'), SANS = '"Segoe UI", Arial, sans-serif';
+  g.fillStyle = '#2a211b'; g.fillRect(0, 0, bc.width, bc.height);
+  g.fillStyle = '#efe5cf'; g.font = `400 60px ${HAND}`; g.fillText(`${document.title}: storyboard`, GAP, 80);
+  g.font = `600 22px ${SANS}`; g.fillStyle = '#d9c9a8';
+  g.fillText(`${TIMELINE.duration}s · ${W}×${H} · ${TIMELINE.bpm} BPM · ${BD.length} beats. Thumbs up or down by panel number.`, GAP, 122);
+  const wrap = (str, x, y, maxW, lh) => { let line = ''; for (const w of str.split(' ')) { const t = line ? line + ' ' + w : w; if (g.measureText(t).width > maxW && line) { g.fillText(line, x, y); y += lh; line = w; } else line = t; } if (line) g.fillText(line, x, y); return y + lh; };
+  const pc = document.createElement('canvas'); pc.width = W; pc.height = H;
+  BD.forEach((b, k) => {
+    renderFrame(b.t, pc);
+    const x = GAP + (k % COLS) * (PW + GAP), y = HEAD + Math.floor(k / COLS) * (PH + NOTE + GAP);
+    g.drawImage(pc, x, y, PW, PH);
+    g.fillStyle = '#f0b27c'; g.font = `700 26px ${SANS}`; g.fillText(`${k + 1}`, x, y + PH + 32);
+    g.fillStyle = '#efe5cf'; g.font = `600 20px ${SANS}`;
+    let ttl = `${b.t.toFixed(1)}s · ${b.title || ''}`; while (ttl.length > 4 && g.measureText(ttl).width > PW - 44) ttl = ttl.slice(0, -2) + '…';   // fits the panel
+    g.fillText(ttl, x + 40, y + PH + 30);
+    g.font = `400 18px ${SANS}`; g.fillStyle = '#cdbd9c';
+    const yy = b.sound ? wrap('sound: ' + b.sound, x, y + PH + 58, PW, 22) : y + PH + 58;
+    if (b.next) { g.fillStyle = '#a8977a'; wrap('→ ' + b.next, x, yy + 2, PW, 22); }
+  });
+  return bc;
+}
+window.renderBoard = renderBoard; window.drawPanel = drawPanel;
+// =====================================================================
+//  kit/score-head.js — live preview (click to hear), noise/impulse/WAV helpers, and the synth.
+//  buildScore() opens here; the piece's score body follows (src/score.js), then kit/score-tail.js closes it.
+//  Helpers inside buildScore: pluck, noiseHit, sub, sweep, riser, chime, bass, blip, pad, drone, out, osc, env.
+//  Set `to = 'm'` (music bus) or `to = 's'` (sfx bus) before calling them. Notes: nz('D4').
+// =====================================================================
+// live preview: rAF on the 24fps grid; click to hear the score (?t=1.5 freezes a frame)
+const QS = new URLSearchParams(location.search);
+const LIVE = { audio: null, t0: 0, start: performance.now() };
+if (!QS.has('export')) {
+  const cv = document.getElementById('c');
+  if (QS.has('t')) renderFrame(parseFloat(QS.get('t')));
+  else {
+    const tick = () => {
+      const sec = LIVE.audio ? LIVE.audio.currentTime - LIVE.t0 : (performance.now() - LIVE.start) / 1000;
+      const t = ((sec % LOOP_T) + LOOP_T) % LOOP_T;
+      renderFrame(Math.floor(t * FPS) / FPS);
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
+  cv.addEventListener('click', async () => {
+    if (LIVE.audio || typeof buildScore !== 'function') return;
+    const ac = new AudioContext(), score = await buildScore(ac.sampleRate);
+    const buf = ac.createBuffer(2, score.left.length, score.sampleRate);
+    buf.copyToChannel(score.left, 0); buf.copyToChannel(score.right, 1);
+    const src = ac.createBufferSource(); src.buffer = buf; src.loop = true; src.connect(ac.destination);
+    LIVE.t0 = ac.currentTime + 0.05; src.start(LIVE.t0); LIVE.audio = ac;
+  });
+}
+
+const HZ = {
+  A1: 55.0, D2: 73.42, F2: 87.31, A2: 110.0, D3: 146.83, F3: 174.61, A3: 220.0, C4: 261.63, D4: 293.66, E4: 329.63, F4: 349.23,
+  Fs4: 369.99, A4: 440.0, B4: 493.88, C5: 523.25, D5: 587.33, E5: 659.25, Fs5: 739.99, A5: 880.0, D6: 1174.66, A6: 1760.0,
+};
+function makeNoise(ac, sec) {
+  const b = ac.createBuffer(1, Math.floor(sec * ac.sampleRate), ac.sampleRate), d = b.getChannelData(0), R = RNG('noise');
+  for (let i = 0; i < d.length; i++) d[i] = R.f() * 2 - 1;
+  return b;
+}
+function makeImpulse(ac, sec, decay) {
+  const n = Math.floor(sec * ac.sampleRate), b = ac.createBuffer(2, n, ac.sampleRate);
+  for (let c = 0; c < 2; c++) { const d = b.getChannelData(c), R = RNG('ir', c); for (let i = 0; i < n; i++) d[i] = (R.f() * 2 - 1) * Math.pow(1 - i / n, decay); }
+  return b;
+}
+function encodeWav(left, right, sr) {
+  const n = left.length, buf = new ArrayBuffer(44 + n * 4), v = new DataView(buf);
+  const ws = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+  ws(0, 'RIFF'); v.setUint32(4, 36 + n * 4, true); ws(8, 'WAVE'); ws(12, 'fmt ');
+  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 2, true); v.setUint32(24, sr, true);
+  v.setUint32(28, sr * 4, true); v.setUint16(32, 4, true); v.setUint16(34, 16, true);
+  ws(36, 'da' + 'ta'); v.setUint32(40, n * 4, true);
+  let o = 44;
+  for (let i = 0; i < n; i++) { v.setInt16(o, Math.round(clamp(left[i], -1, 1) * 32767), true); v.setInt16(o + 2, Math.round(clamp(right[i], -1, 1) * 32767), true); o += 4; }
+  return new Uint8Array(buf);
+}
+
+
+const MIDI = (m) => 440 * 2 ** ((m - 69) / 12);
+const NOTE = { D2: 38, A2: 45, D3: 50, E3: 52, Fs3: 54, A3: 57, D4: 62, E4: 64, Fs4: 66, G4: 67, A4: 69, B4: 71, Cs5: 73, D5: 74, E5: 76, Fs5: 78, A5: 81, B5: 83, D6: 86, E6: 88, Fs6: 90, A6: 93 };
+// any note name: 'D4', 'Fs4' / 'F#4' (sharp), 'Bb3' (flat); the table above is the fast path
+function noteNum(n) {
+  if (NOTE[n] != null) return NOTE[n];
+  const m = /^([A-G])(s|#|b)?(-?\d)$/.exec(n); if (!m) throw new Error(`unknown note "${n}"`);
+  return 12 * (Number(m[3]) + 1) + { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 }[m[1]] + (m[2] === 'b' ? -1 : m[2] ? 1 : 0);
+}
+const nz = (n) => MIDI(noteNum(n));
+async function buildScore(sampleRate = 48000, part = 'mix', normIn = null) {
+  const TAIL = 3.0, len = Math.ceil((LOOP_T + TAIL) * sampleRate);
+  const ac = new OfflineAudioContext(2, len, sampleRate);
+  const master = ac.createGain(); master.gain.value = 0.8;
+  const comp = ac.createDynamicsCompressor();
+  comp.threshold.value = -16; comp.knee.value = 10; comp.ratio.value = 3.5; comp.attack.value = 0.004; comp.release.value = 0.2;
+  master.connect(comp); comp.connect(ac.destination);
+  const musicBus = ac.createGain(), sfxBus = ac.createGain();
+  musicBus.gain.value = part === 'sfx' ? 0 : 1; sfxBus.gain.value = part === 'music' ? 0 : 1;
+  musicBus.connect(master); sfxBus.connect(master);
+  // ducking + presence dip, driven by the narration (lines closer than 0.29s are merged)
+  const duck = ac.createGain(), dip = ac.createBiquadFilter();
+  dip.type = 'peaking'; dip.frequency.value = 2500; dip.Q.value = 1;
+  duck.connect(dip); dip.connect(musicBus);
+  const lines = [];
+  for (const n of TIMELINE.narration) { const L = lines[lines.length - 1]; if (L && n.t0 - L.t1 < 0.29) L.t1 = n.t1; else lines.push({ t0: n.t0, t1: n.t1 }); }
+  const DUCK = 10 ** (-3 / 20);
+  duck.gain.setValueAtTime(1, 0); dip.gain.setValueAtTime(0, 0);
+  for (const L of lines) {
+    duck.gain.setValueAtTime(1, Math.max(0, L.t0 - 0.1)); duck.gain.linearRampToValueAtTime(DUCK, L.t0);
+    duck.gain.setValueAtTime(DUCK, L.t1 + 0.03); duck.gain.linearRampToValueAtTime(1, L.t1 + 0.18);
+    dip.gain.setValueAtTime(0, Math.max(0, L.t0 - 0.1)); dip.gain.linearRampToValueAtTime(-6, L.t0);
+    dip.gain.setValueAtTime(-6, L.t1 + 0.03); dip.gain.linearRampToValueAtTime(0, L.t1 + 0.18);
+  }
+  const mkVerb = (dest, sec = 1.6, decay = 2.8, level = 0.3) => { const v = ac.createConvolver(); v.buffer = makeImpulse(ac, sec, decay); const g = ac.createGain(); g.gain.value = level; v.connect(g); g.connect(dest); return v; };
+  const verbs = { m: mkVerb(duck), s: mkVerb(sfxBus) }, shortVerb = verbs.m, longVerb = mkVerb(duck, 3.6, 1.6, 0.55);
+  const noise = makeNoise(ac, 3.0);
+  let to = 'm';   // which bus the helpers below write to
+
+  // the gain is silent until the envelope starts (a GainNode defaults to 1: a note whose oscillator starts first would click)
+  const env = (g, t, a, peak, d) => { g.gain.value = 0.0001; g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(Math.max(0.0002, peak), t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + a + d); };
+  const out = (node, pan = 0, send = 0) => {
+    const p = ac.createStereoPanner(); p.pan.value = clamp(pan, -1, 1); node.connect(p); p.connect(to === 'm' ? duck : sfxBus);
+    if (send) { const s = ac.createGain(); s.gain.value = send; node.connect(s); s.connect(verbs[to]); }
+  };
+  const osc = (type, f, t, stop) => { const o = ac.createOscillator(); o.type = type; o.frequency.setValueAtTime(f, t); o.start(t); o.stop(stop); return o; };
+  function pluck(t, f, vel, pan = 0, dur = 0.32, bright = 3200, send = 0.25) {
+    const lp = ac.createBiquadFilter(); lp.type = 'lowpass'; lp.Q.value = 2.5;
+    lp.frequency.setValueAtTime(bright, t); lp.frequency.exponentialRampToValueAtTime(380, t + dur);
+    const g = ac.createGain(); env(g, t, 0.003, vel, dur);
+    const g2 = ac.createGain(); g2.gain.value = 0.3;
+    osc('triangle', f, t, t + dur + 0.05).connect(lp);
+    osc('sine', f * 2.004, t, t + dur + 0.05).connect(g2); g2.connect(lp);
+    lp.connect(g); out(g, pan, send);
+  }
+  function noiseHit(t, dur, type, freq, q, vel, pan = 0, send = 0, sweepTo = 0) {
+    const src = ac.createBufferSource(); src.buffer = noise;
+    const f = ac.createBiquadFilter(); f.type = type; f.Q.value = q; f.frequency.setValueAtTime(freq, t);
+    if (sweepTo) f.frequency.exponentialRampToValueAtTime(sweepTo, t + dur);
+    const g = ac.createGain(); env(g, t, Math.min(0.004, dur * 0.3), vel, dur);
+    src.connect(f); f.connect(g); out(g, pan, send);
+    src.start(t, (t * 7.31) % 2.0); src.stop(t + dur + 0.05);
+  }
+  function sub(t, vel) {
+    const o = osc('sine', 120, t, t + 0.8); o.frequency.exponentialRampToValueAtTime(36, t + 0.3);
+    const g = ac.createGain(); env(g, t, 0.004, vel, 0.6); o.connect(g); out(g);
+    noiseHit(t, 0.07, 'lowpass', 1100, 0.7, vel * 0.45);
+  }
+  function sweep(t0, t1, vel, f0, f1, pan = 0) {
+    const src = ac.createBufferSource(); src.buffer = noise; src.loop = true;
+    const f = ac.createBiquadFilter(); f.type = 'bandpass'; f.Q.value = 1.1;
+    f.frequency.setValueAtTime(f0, t0); f.frequency.exponentialRampToValueAtTime(f1, t1);
+    const g = ac.createGain(); g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(vel, t1 - 0.03); g.gain.linearRampToValueAtTime(0.0001, t1 + 0.005);
+    src.connect(f); f.connect(g); out(g, pan, 0.2); src.start(t0, (t0 * 3.1) % 1.0); src.stop(t1 + 0.05);
+  }
+  function riser(t0, t1, vel) {
+    const o = osc('sawtooth', 110, t0, t1 + 0.02); o.frequency.exponentialRampToValueAtTime(1320, t1);
+    const lp = ac.createBiquadFilter(); lp.type = 'lowpass'; lp.Q.value = 6; lp.frequency.setValueAtTime(300, t0); lp.frequency.exponentialRampToValueAtTime(5000, t1);
+    const g = ac.createGain(); g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(vel, t1 - 0.01); g.gain.linearRampToValueAtTime(0.0001, t1 + 0.01);
+    o.connect(lp); lp.connect(g); out(g, 0, 0.3);
+    sweep(t0, t1, vel * 0.9, 400, 7000);
+  }
+  function chime(t, freqs, vel, pan = 0) {
+    freqs.forEach((f, i) => { const g = ac.createGain(), ti = t + i * 0.012; env(g, ti, 0.002, vel / (1 + i * 0.4), 1.3); osc('sine', f, ti, ti + 1.5).connect(g); out(g, pan + (i - 1) * 0.25, 0.6); });
+  }
+  function bass(t, f, vel) { const lp = ac.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 320; const g = ac.createGain(); env(g, t, 0.006, vel, 0.28); osc('triangle', f, t, t + 0.35).connect(lp); lp.connect(g); out(g); }
+  function blip(t, f0, f1, dur, vel, pan = 0) { const o = osc('sine', f0, t, t + dur + 0.05); o.frequency.exponentialRampToValueAtTime(f1, t + dur); const g = ac.createGain(); env(g, t, 0.002, vel, dur); o.connect(g); out(g, pan, 0.2); }
+
+  // ---- v2 instruments built from the helpers above
+  function pad(t0, t1, notes, peak, o = {}) {
+    const lp = ac.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = o.cut ?? 1200; lp.Q.value = 0.7;
+    const g = ac.createGain(), hold = o.swellTo ?? peak;
+    g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(peak, t0 + (o.att ?? 0.4));
+    if (o.swellTo) g.gain.linearRampToValueAtTime(o.swellTo, o.swellAt);
+    g.gain.setValueAtTime(hold, t1 - (o.rel ?? 0.3)); g.gain.exponentialRampToValueAtTime(0.0001, t1);
+    notes.forEach((n, i) => { for (const det of [-7, 7]) { const oo = osc(o.type ?? 'sawtooth', nz(n), t0, t1 + 0.05); oo.detune.value = det + i; oo.connect(lp); } });
+    lp.connect(g); out(g, o.pan ?? 0, o.send ?? 0.4);
+  }
+  function drone(t0, t1, f, peak, o = {}) {
+    const g = ac.createGain(); g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(peak, t0 + (o.att ?? 0.5));
+    g.gain.setValueAtTime(peak, t1 - (o.rel ?? 0.4)); g.gain.exponentialRampToValueAtTime(0.0001, t1);
+    osc('sine', f, t0, t1 + 0.05).connect(g); out(g, 0, 0);
+  }
+  const claudeMotif = (t, notes, vel) => notes.forEach(([n, dt], i) => pluck(t + dt, nz(n), vel, -0.15 + i * 0.1, 0.6, 1300, 0.35));
+  const childMotif = (t, notes, vel, bright = 5200, send = 0.3) => notes.forEach(([n, dt], i) => pluck(t + dt, nz(n), vel, 0.2 - i * 0.1, 0.32, bright, send));
+  // SCORE BODY — projects-two. Quiet pads under the voice, a pluck per card or tab.
+  to = 'm';
+  pad(0.2, BEATS_T.session, ['D3', 'A3', 'Fs4'], 0.016, { type: 'triangle', cut: 800, att: 0.8, rel: 0.4 });
+  pad(BEATS_T.session, BEATS_T.tips, ['B2', 'Fs3', 'D4'], 0.017, { type: 'triangle', cut: 850, att: 0.4, rel: 0.4 });
+  pad(BEATS_T.tips, BEATS_T.close, ['G2', 'D3', 'B3', 'Fs4'], 0.019, { type: 'triangle', cut: 950, att: 0.4, rel: 0.25 });
+  ['t1', 't2', 't3'].forEach((k, i) => pluck(BEATS_T[k] + 0.4, nz(['D5', 'Fs5', 'A5'][i]), 0.1, -0.3 + i * 0.3, 0.3, 2800, 0.25));
+  chime(BEATS_T.close, [nz('D5'), nz('Fs5'), nz('A5')], 0.1);
+  pad(BEATS_T.close + 0.05, DURATION, ['D3', 'A3', 'D4', 'Fs4'], 0.024, { cut: 1100, att: 0.3, rel: 0.6, send: 0.35 });
+  // =====================================================================
+  //  kit/score-tail.js — render, fold the tail over the loop point, loudness stage
+  //  (RMS-normalise to -17 dBFS, look-ahead limiter at -1 dBFS; stems share the mix gain curve)
+  // =====================================================================
+  const buf = await ac.startRendering();
+  // fold the tail over the loop point so the loop is seamless
+  const N = Math.round(LOOP_T * sampleRate), L = new Float32Array(N), Rr = new Float32Array(N);
+  const c0 = buf.getChannelData(0), c1 = buf.getChannelData(1);
+  for (let i = 0; i < N; i++) { L[i] = c0[i] + (i + N < len ? c0[i + N] : 0); Rr[i] = c1[i] + (i + N < len ? c1[i + N] : 0); }
+  // loudness for a phone (subagents-short): RMS-normalise to -17 dBFS, then a look-ahead limiter at -1 dBFS.
+  // Stems reuse the mix's gain and gain curve, so they sum back to the mix.
+  let k = normIn?.k, g = normIn?.g;
+  if (!g) {
+    let sum = 0; for (let i = 0; i < N; i++) sum += (L[i] * L[i] + Rr[i] * Rr[i]) / 2;
+    k = 10 ** (-17 / 20) / Math.sqrt(sum / N || 1e-12);
+    const ceil = 0.89; g = new Float32Array(N);
+    for (let i = 0; i < N; i++) { const p = Math.max(Math.abs(L[i]), Math.abs(Rr[i])) * k; g[i] = p > ceil ? ceil / p : 1; }
+    const att = Math.exp(-1 / (0.0015 * sampleRate)), rel = Math.exp(-1 / (0.09 * sampleRate));
+    for (let i = N - 2; i >= 0; i--) g[i] = Math.min(g[i], 1 - (1 - g[i + 1]) * att);
+    let r = 1; for (let i = 0; i < N; i++) { r = Math.min(g[i], 1 - (1 - r) * rel); g[i] = r; }
+  }
+  for (let i = 0; i < N; i++) { L[i] *= k * g[i]; Rr[i] *= k * g[i]; }
+  return { left: L, right: Rr, sampleRate, norm: { k, g } };
+}
+function wavB64(s) {
+  const bytes = encodeWav(s.left, s.right, s.sampleRate);
+  let bin = '';
+  for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+  return btoa(bin);
+}
+async function renderAudioWav() { return wavB64(await buildScore(48000, 'mix')); }
+async function renderAudioStems() {
+  const mix = await buildScore(48000, 'mix');
+  const music = await buildScore(48000, 'music', mix.norm), sfx = await buildScore(48000, 'sfx', mix.norm);
+  return { music: wavB64(music), sfx: wavB64(sfx) };
+}
+window.renderAudioWav = renderAudioWav;
+window.renderAudioStems = renderAudioStems;
+</script>
+</body>
+</html>
