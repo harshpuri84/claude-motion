@@ -24,7 +24,7 @@
   },
   {
    "id": "session",
-   "text": "Here is what I missed. Every thread is a full session, on its own branch, in the cloud. Close the laptop and it keeps going, and you can check in from your phone. Need your local files? Ask, and it runs on your machine.",
+   "text": "Here is what I missed. Every thread is a full session, on its own branch, in the cloud. Close the laptop and a cloud thread keeps going, and you can check in from your phone. Need your local files? Ask, and it runs on your machine.",
    "after": 0.4,
    "file": "session.mp3"
   },
@@ -36,7 +36,7 @@
   },
   {
    "id": "library",
-   "text": "The library holds artifacts and files that every thread can read. And a daily routine can open a new thread the moment something regresses.",
+   "text": "The library holds the files you add and the files threads produce. And a daily routine can open a new thread when it finds a regression.",
    "after": 0.4,
    "file": "library.mp3"
   },
@@ -48,7 +48,7 @@
   },
   {
    "id": "t1",
-   "text": "One. Every thread uses your plan's limits. Keep the coordinator on low effort, and use a smaller model for the threads.",
+   "text": "One. Every thread uses your plan's limits. Leave the coordinator on low effort, and use a smaller model for the threads.",
    "after": 0.4,
    "file": "t1.mp3"
   },
@@ -66,7 +66,7 @@
   },
   {
    "id": "close",
-   "text": "Projects is in beta for Pro and Max. No clear verdict yet, but I will be using it more often.",
+   "text": "Projects is in beta for Pro and Max, not Team or Enterprise yet. No clear verdict yet, but I will be using it more often.",
    "after": 0.0,
    "file": "close.mp3"
   }

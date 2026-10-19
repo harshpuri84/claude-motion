@@ -22,13 +22,16 @@ function sceneHook() {
   const s = popS(T0 + 0.3);
   if (s > 0) {
     ctx.save(); ctx.translate(960, 520); ctx.scale(s, s); ctx.translate(-960, -520);
-    docCard(560, 280, 800, 480, 'Projects = Cowork for non-tech people', { key: 'hk', accent: '#7a9cc6', lines: 4, rot: -0.015, size: 40 });
+    const HP = rrectPts(340, 300, 1240, 420, 30); softShadow(HP, 'hk', 14, 18, 0.18); paint(HP, { fill: '#fbfaf6', key: 'hkc', w: 3.4, amt: 0.6, line: PP.ink });
+    sansText('Projects =', 960, 450, 92, PP.ink, { weight: 700, align: 'center' });
+    sansText('Cowork for non-tech people', 960, 570, 76, PP.ink, { weight: 600, align: 'center' });
+    ink([[430, 610], [1490, 610]], { w: 6, amt: 0.6, key: 'hku', color: '#7a9cc6', frac: ev(T0 + 0.8, 1.6) });
     ctx.restore();
   }
   const x = ev(VW('hook', 'wrong') - 0.2, 0.35);
   if (x > 0) {
-    ink([[540, 300], [1380, 760]], { w: 11, amt: 1, key: 'x1', frac: clamp(x * 2), color: PP.terra });
-    ink([[1380, 290], [540, 770]], { w: 11, amt: 1, key: 'x2', frac: clamp(x * 2 - 1), color: PP.terra });
+    ink([[380, 320], [1540, 700]], { w: 11, amt: 1, key: 'x1', frac: clamp(x * 2), color: PP.terra });
+    ink([[1540, 320], [380, 700]], { w: 11, amt: 1, key: 'x2', frac: clamp(x * 2 - 1), color: PP.terra });
   }
   const wr = ev(VW('hook', 'wrong') + 0.25, 0.5);
   const pw = ev(VW('hook', 'powerful') - 0.4, 0.6);
@@ -60,6 +63,7 @@ function sceneHarness() {
     chip(n, x, lerp(160, 560, k), c, t, { size: 44, rot: [-0.03, 0.02, -0.02][i] });
   });
   if (TT > VW('harness', 'project')) sansText('one project', 960, 790, 36, PP.ink, { weight: 600, align: 'center', al: ev(VW('harness', 'project'), 0.4) });
+  const os = ev(VW('harness', 'os'), 0.4); if (os > 0) ink(ellipsePts(640, 222, 190, 56, 0, 40), { closed: true, w: 6, amt: 0.6, key: 'hosc', color: PP.terra, frac: os });
   walker(300, 840, 70, { key: 'hero', mood: 'happy' });
   sceneLabel('my whole harness', T0 + 0.1);
   dial(1, 'harness');
@@ -101,28 +105,28 @@ function sceneSession() {
   if (cc > 0) {
     ctx.save(); ctx.translate(cx, cy); ctx.scale(cc, cc); ctx.translate(-cx, -cy);
     const P = cloudPts(cx, cy, 1.9); trace(P, true); ctx.fillStyle = 'rgba(30,40,85,0.9)'; ctx.fill(); bpLine(P, { closed: true, w: 2.8 });
-    bpPill('own branch', cx - 150, cy - 140, { size: 24 });
-    ['thread 1 · own session', 'editing skills', 'tests passing'].forEach((s, i) => monoText(s, cx - 330, cy - 40 + i * 52, 28, i === 2 ? PP.cyan : PP.label, { key: 'cl' + i, count: Math.floor(clamp((TT - T0 - 0.8 - i * 0.6) / 0.5) * s.length) }));
+    bpPill('own branch', cx - 150, cy - 150, { size: 34 });
+    ['thread 1 · own session', 'editing skills', 'tests passing'].forEach((s, i) => monoText(s, cx - 330, cy - 40 + i * 58, 36, i === 2 ? PP.cyan : PP.label, { key: 'cl' + i, count: Math.floor(clamp((TT - T0 - 0.8 - i * 0.6) / 0.5) * s.length) }));
     ctx.restore();
-    sansText('in the cloud', cx, cy + 260, 34, PP.gold, { weight: 600, align: 'center', al: ev(VW('session', 'cloud'), 0.4) });
+    sansText('in the cloud', cx, cy + 260, 44, PP.gold, { weight: 600, align: 'center', al: ev(VW('session', 'cloud'), 0.4) });
   }
   // the laptop closes on "laptop"
   const lx = 460, ly = 800, close = ev(VW('session', 'laptop'), 0.5);
   paint(rrectPts(lx - 150, ly, 300, 26, 8), { fill: '#2a3566', key: 'lapb', w: 2.4, amt: 0.3, line: PP.line });
   const ang = lerp(1.0, 0, EZ.io(close)), lh = 200 * Math.sin(ang) + 4;
   bpLine(rrectPts(lx - 130, ly - lh, 260, lh, 10), { closed: true, w: 2.6, color: PP.label });
-  if (close >= 1) { sansText('z z z', lx + 160, ly - 40, 34, PP.label, { weight: 600, al: 0.8 }); }
+  if (close >= 1) { sansText('z z z', lx + 160, ly - 40, 44, PP.label, { weight: 600, al: 0.8 }); }
   // work keeps going: a pulse from the cloud, and a phone check-in
   if (close >= 1) {
     const u = mod((TT - VW('session', 'laptop')) * 0.7, 1);
     bpLine([[cx - 120, cy + 150], [lx + 100, ly - 40]], { w: 2, dash: [10, 8], color: 'rgba(174,185,236,0.5)', glow: 'rgba(0,0,0,0)' });
     glint(lerp(cx - 120, lx + 100, u), lerp(cy + 150, ly - 40, u), 8);
     const pa = ev(VW('session', 'keeps') + 0.2, 0.5);
-    if (pa > 0) { bpLine(rrectPts(1560, 600, 150, 270, 22), { closed: true, w: 2.8, frac: pa }); sansText('check in', 1635, 930, 28, PP.label, { weight: 600, align: 'center', al: pa }); }
+    if (pa > 0) { bpLine(rrectPts(1480, 540, 250, 400, 30), { closed: true, w: 3, frac: pa }); sansText('thread 1', 1605, 680, 34, PP.label, { weight: 600, align: 'center', al: pa }); sansText('running', 1605, 740, 34, PP.cyan, { weight: 700, align: 'center', al: pa }); sansText('check in', 1605, 990, 40, PP.gold, { weight: 700, align: 'center', al: pa }); }
   }
   // local files on request
   const lo = ev(VW('session', 'local'), 0.5);
-  if (lo > 0) { bpPill('local files', 760, 960, { size: 28 }); bpLine([[1000, 560], [900, 760], [lx + 80, ly - 30]], { w: 3, color: PP.gold, glow: 'rgba(242,198,109,0.3)', frac: lo }); }
+  if (lo > 0) { bpPill('local files', 760, 960, { size: 38 }); bpLine([[1000, 560], [900, 760], [lx + 80, ly - 30]], { w: 3, color: PP.gold, glow: 'rgba(242,198,109,0.3)', frac: lo }); }
   walker(220, 800, 54, { key: 'hero', dark: true });
   sceneLabel('every thread is a full session', T0 + 0.1, { dark: true });
   dial(3, 'session', true);
@@ -140,21 +144,22 @@ function scenePR() {
     softShadow(P, 'pr', 14, 18, 0.18); paint(P, { fill: '#fbfaf6', key: 'pr', w: 3.4, amt: 0.6, line: PP.ink });
     sansText('Pull request', x + 44, y + 80, 44, PP.ink, { weight: 700 });
     chip('open', x + w - 110, y + 64, '#8fcf7a', T0 + 0.8, { size: 28 });
-    ['a thread opened this', 'review comments: 1'].forEach((t, i) => sansText(t, x + 44, y + 170 + i * 60, 32, 'rgba(43,38,34,0.7)', { weight: 500 }));
+    ['a thread opened this', TT > VW('pr', 'answers') + 0.4 ? 'review comments: resolved' : 'review comments: 1'].forEach((t, i) => sansText(t, x + 44, y + 170 + i * 66, 40, 'rgba(43,38,34,0.75)', { weight: 600 }));
     // CI row: red, then green after "fix"
-    const fix = VW('pr', 'fix'), ok = TT > fix + 0.3;
+    const fix = VW('pr', 'fix'), ok = TT > fix + 0.8;
+    { const cd = ev(fix - 0.1, 0.7); if (cd > 0 && cd < 1) { ctx.fillStyle = PP.terra; ctx.beginPath(); ctx.arc(lerp(x - 80, x + 300, EZ.io(cd)), y + 385, 16, 0, TAU); ctx.fill(); } }
     paint(rrectPts(x + 44, y + 340, w - 88, 90, 16), { fill: ok ? '#e4f2d8' : '#f8dcd5', key: 'ci', w: 2.8, amt: 0.5, line: PP.ink });
     sansText('CI', x + 80, y + 398, 36, PP.ink, { weight: 700 });
-    if (ok) { ink([[x + 560, y + 388], [x + 590, y + 416], [x + 650, y + 350]], { w: 9, amt: 0.6, key: 'ck', color: '#3f7a2c', frac: ev(fix + 0.3, 0.3) }); sansText('passing', x + 690, y + 398, 32, '#3f7a2c', { weight: 700 }); }
-    else { ink([[x + 560, y + 358], [x + 620, y + 418]], { w: 9, amt: 0.6, key: 'cx1', color: PP.terraD }); ink([[x + 620, y + 358], [x + 560, y + 418]], { w: 9, amt: 0.6, key: 'cx2', color: PP.terraD }); sansText('failing', x + 690, y + 398, 32, PP.terraD, { weight: 700 }); }
-    sansText('thread pushes the fix', x + 44, y + 520, 32, PP.ink, { weight: 600, al: ev(fix, 0.4) });
+    if (ok) { ink([[x + 560, y + 388], [x + 590, y + 416], [x + 650, y + 350]], { w: 9, amt: 0.6, key: 'ck', color: '#3f7a2c', frac: ev(fix + 0.8, 0.3) }); sansText('passing', x + 690, y + 398, 36, '#3f7a2c', { weight: 700 }); }
+    else { ink([[x + 560, y + 358], [x + 620, y + 418]], { w: 9, amt: 0.6, key: 'cx1', color: PP.terraD }); ink([[x + 620, y + 358], [x + 560, y + 418]], { w: 9, amt: 0.6, key: 'cx2', color: PP.terraD }); sansText('failing', x + 690, y + 398, 36, PP.terraD, { weight: 700 }); }
+    sansText('thread pushes the fix', x + 44, y + 540, 40, PP.ink, { weight: 600, al: ev(fix, 0.4) });
     ctx.restore();
   }
   // watching eye
   const e = ev(VW('pr', 'watches'), 0.4);
-  if (e > 0) { ink(ellipsePts(1560, 420, 90, 52, 0, 40), { closed: true, w: 5, amt: 0.6, key: 'eye', color: PP.ink, frac: e }); ctx.fillStyle = PP.terra; ctx.beginPath(); ctx.arc(1560 + Math.sin(TT * 1.3) * 12, 420, 20, 0, TAU); ctx.fill(); sansText('watching', 1560, 540, 34, PP.ink, { weight: 600, align: 'center', al: e }); }
+  if (e > 0) { ink(ellipsePts(1560, 420, 90, 52, 0, 40), { closed: true, w: 5, amt: 0.6, key: 'eye', color: PP.ink, frac: e }); ctx.fillStyle = PP.terra; ctx.beginPath(); ctx.arc(1560 + Math.sin(TT * 1.3) * 12, 420, 20, 0, TAU); ctx.fill(); sansText('watching', 1560, 540, 44, PP.ink, { weight: 600, align: 'center', al: e }); }
   const several = ev(VW('pr', 'several'), 0.4);   // "several PRs": small stack builds up
-  for (let i = 0; i < 4; i++) { const a = ev(VW('pr', 'several') + i * 0.25, 0.3); if (a > 0) chip('PR', 1480 + i * 80, 760 + (i % 2) * 18, '#fbfaf6', VW('pr', 'several') + i * 0.25, { size: 28, rot: [-0.05, 0.04, -0.03, 0.05][i] }); }
+  for (let i = 0; i < 4; i++) { const a = ev(VW('pr', 'several') + i * 0.25, 0.3); if (a > 0) chip('PR', 1440 + i * 120, 760 + (i % 2) * 18, '#fbfaf6', VW('pr', 'several') + i * 0.25, { size: 40, rot: [-0.05, 0.04, -0.03, 0.05][i] }); }
   walker(260, 860, 70, { key: 'hero', mood: 'happy' });
   sceneLabel('it opens the PR and fixes CI', T0 + 0.1);
   dial(4, 'pull requests');
@@ -171,8 +176,8 @@ function sceneLibrary() {
     paint([[x, y], [x + 200, y], [x + 240, y - 50], [x, y - 50]], { fill: '#e9b949', key: 'lt', w: 3, amt: 0.5, line: PP.ink });
     paint(rrectPts(x, y, w, h, 24), { fill: '#f4e3b0', key: 'lib', w: 3.4, amt: 0.6, line: PP.ink });
     handText('Library', x + 40, y + 70, 56, PP.ink, { key: 'lib', weight: 700 });
-    docCard(x + 50, y + 110, 200, 270, 'report', { key: 'lr', accent: '#c75b39', lines: 5, rot: -0.04, size: 26 });
-    docCard(x + 270, y + 130, 200, 250, 'design spec', { key: 'ls', accent: '#3f7a8c', lines: 4, rot: 0.04, size: 24 });
+    docCard(x + 50, y + 110, 200, 270, 'files', { key: 'lr', accent: '#c75b39', lines: 5, rot: -0.04, size: 26 });
+    docCard(x + 270, y + 130, 200, 250, 'output', { key: 'ls', accent: '#3f7a8c', lines: 4, rot: 0.04, size: 24 });
     ctx.restore();
   }
   // three threads read from it
@@ -181,17 +186,17 @@ function sceneLibrary() {
     const a = ev(r + i * 0.2, 0.6); if (a <= 0) return;
     const y0 = [380, 540, 700][i];
     ink([[1260, y0], [1400, y0 + (i - 1) * 30], [1500, y0 + (i - 1) * 40]], { w: 5, amt: 0.8, key: 'rl' + i, color: THC[i], frac: a });
-    paint(ellipsePts(1560, y0 + (i - 1) * 40, 44, 44, 0, 28), { fill: THC[i], key: 'rd' + i, w: 2.6, amt: 0.4, line: PP.ink });
+    paint(ellipsePts(1560, y0 + (i - 1) * 40, 44, 44, 0, 28), { fill: THC[i], key: 'rd' + i, w: 2.6, amt: 0.4, line: PP.ink }); sansText('thread ' + (i + 1), 1630, y0 + (i - 1) * 40 + 12, 38, PP.ink, { weight: 700 });
   });
   // the daily routine: a clock, then a new thread opens on "regresses"
   const c = ev(VW('library', 'daily'), 0.5);
   if (c > 0) {
     ink(ellipsePts(340, 760, 90, 90, 0, 40), { closed: true, w: 6, amt: 0.6, key: 'clk', color: PP.ink, frac: c });
     const ha = TT * 1.2; ink([[340, 760], [340 + Math.cos(ha) * 60, 760 + Math.sin(ha) * 60]], { w: 6, amt: 0.2, key: 'hand', color: PP.terraD });
-    sansText('every day', 340, 900, 34, PP.ink, { weight: 600, align: 'center', al: c });
+    sansText('every day', 340, 900, 44, PP.ink, { weight: 600, align: 'center', al: c });
   }
-  const rg = ev(VW('library', 'regresses'), 0.5);
-  if (rg > 0) { ink([[450, 740], [560, 700], [640, 660]], { w: 4, amt: 0.6, key: 'ra', color: PP.terraD, frac: rg }); chip('new thread', 880, 880, '#f8dcd5', VW('library', 'regresses'), { size: 32, rot: 0.02 }); }
+  const rg = ev(VW('library', 'regression'), 0.5);
+  if (rg > 0) { ink([[450, 740], [560, 700], [640, 660]], { w: 4, amt: 0.6, key: 'ra', color: PP.terraD, frac: rg }); chip('new thread', 900, 880, '#f8dcd5', VW('library', 'regression'), { size: 44, rot: 0.02 }); }
   sceneLabel('shared library, daily routine', T0 + 0.1);
   dial(5, 'library');
 }
@@ -205,17 +210,17 @@ function sceneTips() {
   if (s > 0) {
     ctx.save(); ctx.translate(x + w / 2, y + h / 2); ctx.scale(s, s); ctx.translate(-(x + w / 2), -(y + h / 2));
     const P = rrectPts(x, y, w, h, 28); softShadow(P, 'tp', 14, 18, 0.18); paint(P, { fill: '#fbfaf6', key: 'tp', w: 3.4, amt: 0.6, line: PP.ink });
-    sansText('Welcome back.', x + 44, y + 90, 50, PP.ink, { weight: 700 });
-    sansText('Nothing is waiting on you.', x + 44, y + 138, 28, 'rgba(43,38,34,0.6)', { weight: 400 });
+    sansText('Welcome back.', x + 44, y + 90, 56, PP.ink, { weight: 700 });
+    sansText('Nothing is waiting on you.', x + 44, y + 142, 36, 'rgba(43,38,34,0.6)', { weight: 400 });
     const groups = [['Waiting on you', '0', []], ['Idle', '2', ['hooks setup', 'skills cleanup']], ['Resolved', '7', ['rules draft', 'release notes', 'PR fixes']]];
     let yy = y + 200;
     groups.forEach(([g, n, rows], gi) => {
       const a = ev(T0 + 0.8 + gi * 0.35, 0.3); if (a <= 0) return;
       ctx.save(); ctx.globalAlpha = a;
       paint(rrectPts(x + 28, yy, w - 56, 62, 14), { fill: '#eeece4', key: 'gh' + gi, w: 2, amt: 0.4, line: 'rgba(43,38,34,0.25)' });
-      sansText(g, x + 56, yy + 42, 30, PP.ink, { weight: 600 }); monoText(n, x + 56 + sansW(g, 30) + 24, yy + 42, 28, PP.label === '#e6eaff' ? PP.terraD : 'rgba(43,38,34,0.6)', { key: 'gn' + gi });
-      yy += 80;
-      rows.forEach((r, ri) => { sansText(r, x + 56, yy + 36, 30, gi === 2 ? 'rgba(43,38,34,0.5)' : PP.ink, { weight: 500 }); monoText(gi === 2 ? '3d' : '1h', x + w - 110, yy + 36, 26, 'rgba(43,38,34,0.45)', { key: 'gt' + gi + ri }); yy += 70; });
+      sansText(g, x + 56, yy + 44, 38, PP.ink, { weight: 600 }); monoText(n, x + 56 + sansW(g, 38) + 24, yy + 44, 36, PP.label === '#e6eaff' ? PP.terraD : 'rgba(43,38,34,0.6)', { key: 'gn' + gi });
+      yy += 84;
+      rows.forEach((r, ri) => { sansText(r, x + 56, yy + 38, 38, gi === 2 ? 'rgba(43,38,34,0.5)' : PP.ink, { weight: 500 }); monoText(gi === 2 ? '3d' : '1h', x + w - 120, yy + 38, 34, 'rgba(43,38,34,0.45)', { key: 'gt' + gi + ri }); yy += 76; });
       yy += 14;
       ctx.restore();
     });
@@ -236,23 +241,23 @@ function sceneT1() {
   const cx = 560, cy = 560;
   bpLine(ellipsePts(cx, cy, 120, 120, 0, 80), { closed: true, w: 2.6 });
   walker(cx, cy, 66, { key: 'hero', dark: true });
-  sansText('coordinator', cx, cy + 190, 32, PP.label, { weight: 600, align: 'center' });
+  sansText('coordinator', cx, cy + 190, 40, PP.label, { weight: 600, align: 'center' });
   const sy = 330; bpLine([[cx - 160, sy], [cx + 160, sy]], { w: 3, color: PP.lineD });
   const k = ev(VW('t1', 'low') - 0.2, 0.5), kx = lerp(cx + 150, cx - 140, EZ.io(k));
   ctx.fillStyle = PP.gold; ctx.beginPath(); ctx.arc(kx, sy, 16, 0, TAU); ctx.fill();
-  sansText('effort: low', cx, sy - 40, 34, PP.gold, { weight: 700, align: 'center' });
+  sansText('effort: low', cx, sy - 40, 46, PP.gold, { weight: 700, align: 'center' });
   // three threads, each on a smaller model
   const th = VW('t1', 'smaller');
   [300, 560, 820].forEach((y, i) => {
     const f = ev(th - 0.5 + i * 0.2, 0.6); if (f <= 0) return;
     const P = []; for (let q = 0; q <= 24; q++) { const u = q / 24; P.push([lerp(cx + 120, 1250, u), lerp(cy, y, EZ.io(u))]); }
     bpLine(P, { w: 2.4, frac: f });
-    if (f >= 1) { bpPill('thread ' + (i + 1), 1400, y, { size: 28 }); bpPill('smaller model', 1700, y, { size: 24 }); }
+    if (f >= 1) { bpPill('thread ' + (i + 1), 1380, y, { size: 36 }); bpPill('smaller model', 1700, y, { size: 32 }); }
   });
   // plan limits: a meter that fills as threads run
-  const m = ev(T0 + 0.5, 4), mw = 520; bpLine(rrectPts(700, 960, mw, 22, 11), { closed: true, w: 2, color: PP.lineD, glow: 'rgba(0,0,0,0)' });
-  ctx.fillStyle = PP.cyan; ctx.fillRect(704, 964, (mw - 8) * 0.55 * m, 14);
-  sansText('plan limits', 700, 1010 - 6, 26, PP.label, { weight: 500 });
+  const m = 1, mw = 520; bpLine(rrectPts(700, 960, mw, 22, 11), { closed: true, w: 2, color: PP.lineD, glow: 'rgba(0,0,0,0)' });
+  const fr = TT < th ? lerp(0.15, 0.9, ev(T0 + 0.5, 3.5)) : lerp(0.9, 0.4, ev(th, 1.2)); ctx.fillStyle = PP.cyan; ctx.fillRect(704, 964, (mw - 8) * fr * m, 14);
+  sansText('plan limits used', 700, 1012, 36, PP.label, { weight: 500 });
   sceneLabel('tip 1: low effort coordinator', T0 + 0.1, { dark: true });
   dial(7, 'tip 1', true);
 }
@@ -289,13 +294,13 @@ function sceneT3() {
   blueprintWorld('t3');
   sansText('3', 200, 230, 120, PP.gold, { weight: 700 });
   const m = popS(T0 + 0.3);
-  if (m > 0) { ctx.save(); ctx.translate(cx, cy); ctx.scale(m, m); ctx.translate(-cx, -cy); const P = rrectPts(cx - 260, cy - 90, 520, 180, 30); trace(P, true); ctx.fillStyle = 'rgba(14,20,45,0.95)'; ctx.fill(); bpLine(P, { closed: true, w: 2.8, color: PP.gold, glow: 'rgba(242,198,109,0.25)' }); sansText('shared memory', cx, cy - 6, 40, PP.label, { weight: 700, align: 'center' }); sansText('always show a plan first', cx, cy + 46, 26, PP.gold, { weight: 500, align: 'center' }); ctx.restore(); }
-  const pr = VW('t3', 'once');
+  if (m > 0) { ctx.save(); ctx.translate(cx, cy); ctx.scale(m, m); ctx.translate(-cx, -cy); const P = rrectPts(cx - 260, cy - 90, 520, 180, 30); trace(P, true); ctx.fillStyle = 'rgba(14,20,45,0.95)'; ctx.fill(); bpLine(P, { closed: true, w: 2.8, color: PP.gold, glow: 'rgba(242,198,109,0.25)' }); sansText('shared memory', cx, cy - 6, 48, PP.label, { weight: 700, align: 'center' }); sansText('always show a plan first', cx, cy + 50, 34, PP.gold, { weight: 500, align: 'center' }); ctx.restore(); }
+  const pr = T0 + 0.3;
   [[360, 860], [960, 880], [1560, 860]].forEach(([x, y], i) => {
     const f = ev(pr + 0.2 + i * 0.25, 0.7); if (f <= 0) return;
     const P = []; for (let q = 0; q <= 24; q++) { const u = q / 24; P.push([lerp(cx, x, u), lerp(cy + 90, y - 50, EZ.io(u))]); }
     bpLine(P, { w: 2.4, frac: f });
-    if (f >= 1) { const u = ((TT - pr - 1 - i * 0.2) * 0.6) % 1, p = pointAt(P, u); if (p) glint(p[0], p[1], 9); bpPill('thread ' + (i + 1), x, y, { size: 28 }); ctx.fillStyle = THC[i]; ctx.beginPath(); ctx.arc(x + 110, y, 9, 0, TAU); ctx.fill(); }
+    if (f >= 1) { const u = ((TT - pr - 1 - i * 0.2) * 0.6) % 1, p = pointAt(P, u); if (p) glint(p[0], p[1], 9); bpPill('thread ' + (i + 1), x, y, { size: 36 }); ctx.fillStyle = THC[i]; ctx.beginPath(); ctx.arc(x + 110, y, 9, 0, TAU); ctx.fill(); }
   });
   walker(240, 780, 54, { key: 'hero', dark: true });
   sceneLabel('tip 3: threads share memory', T0 + 0.1, { dark: true });
@@ -311,7 +316,9 @@ function sceneClose() {
   paint(rrectPts(360, 330, 1200, 380, 28), { fill: PP.paper, key: 'cl', w: 3.4, amt: 0.6, line: PP.ink });
   handText('No clear verdict yet.', 960 - handW('No clear verdict yet.', 84, 700) / 2, 480, 84, PP.ink, { key: 'v1', weight: 700, frac: a });
   handText('I will use it more.', 960 - handW('I will use it more.', 84, 700) / 2, 620, 84, PP.terraD, { key: 'v2', weight: 700, frac: b });
-  walker(960, 860, 70, { key: 'hero', mood: 'happy' });
+  chip('Beta · Pro and Max', 1330, 840, '#fbfaf6', VW('close', 'beta'), { size: 44, rot: -0.02 });
+  { const nt = ev(VW('close', 'team') + 0.1, 0.4); if (nt > 0) sansText('not Team or Enterprise yet', 1330, 930, 36, PP.ink, { weight: 600, align: 'center', al: nt }); }
+  walker(560, 860, 70, { key: 'hero', mood: 'happy' });
   dial(10, 'verdict');
 }
 
