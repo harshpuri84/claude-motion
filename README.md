@@ -31,6 +31,10 @@ You need Claude Code, Node 18+ and ffmpeg.
 
 The skill asks a few questions, then stops twice for your approval: once for the story, once for the storyboard. It renders nothing until you approve the board.
 
+## LinkedIn pieces
+
+`/linkedin-piece "<idea>"` takes one idea to a review-checked 4:5 video and its post copy. [PIPELINE.md](PIPELINE.md) has the steps, the gates and the pass bar. To work by hand, run `tools/new-piece.sh <slug>` to start a piece and `tools/check.sh <slug> --export` to render and review it.
+
 ## Look at the piece
 
 Open `pieces/air-shipment/index.html` in a browser. The canvas draws live.
