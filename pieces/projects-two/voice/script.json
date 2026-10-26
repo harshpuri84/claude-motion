@@ -1,0 +1,75 @@
+{
+ "lead": 0.5,
+ "tail": 2.0,
+ "voice_id": "QTrMV1c7DRg2cxmcqmDX",
+ "model": "eleven_v4",
+ "lines": [
+  {
+   "id": "hook",
+   "text": "I thought Projects was Cowork for non-technical people. I was wrong. It is much more powerful.",
+   "after": 0.4,
+   "file": "hook.mp3"
+  },
+  {
+   "id": "harness",
+   "text": "Since then I used it to build my whole Clawd harness: skills, rules and hooks, all inside one project, a team OS.",
+   "after": 0.4,
+   "file": "harness.mp3"
+  },
+  {
+   "id": "split",
+   "text": "I gave the main chat one goal. It split the work into threads and ran them in parallel.",
+   "after": 0.4,
+   "file": "split.mp3"
+  },
+  {
+   "id": "session",
+   "text": "Here is what I missed. Every thread is a full session, on its own branch, in the cloud. Close the laptop and a cloud thread keeps going, and you can check in from your phone. Need your local files? Ask, and it runs on your machine.",
+   "after": 0.4,
+   "file": "session.mp3"
+  },
+  {
+   "id": "pr",
+   "text": "A thread opens its own pull request, then watches it. When CI fails, it pushes the fix, and it answers review comments. I raised several PRs this way without leaving the project.",
+   "after": 0.4,
+   "file": "pr.mp3"
+  },
+  {
+   "id": "library",
+   "text": "The library holds the files you add and the files threads produce. And a daily routine can open a new thread when it finds a regression.",
+   "after": 0.4,
+   "file": "library.mp3"
+  },
+  {
+   "id": "tips",
+   "text": "Now, three tips from the Clawd Code team for managing the coordinator.",
+   "after": 0.4,
+   "file": "tips.mp3"
+  },
+  {
+   "id": "t1",
+   "text": "One. Every thread uses your plan's limits. Leave the coordinator on low effort, and use a smaller model for the threads.",
+   "after": 0.4,
+   "file": "t1.mp3"
+  },
+  {
+   "id": "t2",
+   "text": "Two. Tell it how many threads to run, how often to update you, and to show a plan first.",
+   "after": 0.4,
+   "file": "t2.mp3"
+  },
+  {
+   "id": "t3",
+   "text": "Three. Threads share memory. Teach it a preference once, and every thread knows.",
+   "after": 0.4,
+   "file": "t3.mp3"
+  },
+  {
+   "id": "close",
+   "text": "Projects is in beta for Pro and Max, not Team or Enterprise yet. No clear verdict yet, but I will be using it more often.",
+   "after": 0.0,
+   "file": "close.mp3"
+  }
+ ],
+ "notes": "Spoken text spells Claude as 'Clawd'. On-screen text keeps 'Claude'."
+}
