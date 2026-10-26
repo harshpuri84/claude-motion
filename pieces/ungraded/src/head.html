@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ungraded, not unreliable</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #1b1714; overflow: hidden; }
+  body { display: flex; align-items: center; justify-content: center; }
+  canvas { height: min(100vh, calc(100vw * 5 / 4)); width: auto; aspect-ratio: 4 / 5; display: block; cursor: pointer; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1080" height="1350"></canvas>
+<script>
+"use strict";
+// =====================================================================
+//  UNGRADED: 4:5, 40.5s @ 120 BPM, 24fps, crosshatch. F4 mission, music only.
+//  An agent climbs a score it wrote itself; the audit rebuilds the score from fields it may be graded on.
+//  Colour: terracotta = the agent and anything it wrote; red dashes = the plan (the question);
+//  green = graded by a rule; yellow = graded by the LLM judge; grey hatch = excluded.
+// =====================================================================
+const FPS = 24, W = 1080, H = 1350;
+const BPM = 120, BEAT = 60 / BPM, E8 = BEAT / 2, E16 = BEAT / 4;
+const DURATION = 40.5;
+const NFRAMES = Math.round(DURATION * FPS);
+const LOOP_T = NFRAMES / FPS;
+const SAFE = { top: 60, bottom: 60, right: 60 };
+const HAND = '"Bradley Hand", "Chalkboard SE", "Ink Free", "Segoe Print", "Comic Neue", cursive';
+const CX = 540;
+
+// the shot list: [t0, scene, camera]
+const SHOT_LIST = [
+  [0.0,  'climb',  'wide'],    // 1 flash-forward: on top of its own score
+  [3.0,  'draw',   'wide'],    // 2 rewind: it drew the bar itself
+  [6.0,  'loop',   'wide'],    // 3 Harness²: prompts, tools, memory
+  [12.0, 'rise',   'wide'],    // 4 the bar shoots up; the pencil is its own
+  [15.0, 'sheet',  'wide'],    // 5 turn: silence, the schema sheet, the question
+  [17.0, 'sort',   'wide'],    // 6 rush: 139 tiles through the question
+  [23.0, 'rules',  'wide'],    // 7 50 rules, 3 judge; the bounce
+  [29.0, 'recipe', 'wide'],    // 8 the recipe, dashes then ink
+  [35.0, 'erase',  'wide'],    // 9 quiet: the old bar erases
+  [37.0, 'payoff', 'wide'],    // 10 the new bar, shorter and real
+];
+const SCENE = {
+  climb: () => sceneClimb(), draw: () => sceneDraw(), loop: () => sceneLoop(), rise: () => sceneRise(),
+  sheet: () => sceneSheet(), sort: () => sceneSort(), rules: () => sceneRules(), recipe: () => sceneRecipe(),
+  erase: () => sceneErase(), payoff: () => scenePayoff(),
+};
+const ERA_LIST = SHOT_LIST.map(([t0, sc], i) => [t0, i + 1 < SHOT_LIST.length ? SHOT_LIST[i + 1][0] : DURATION, SCENE[sc]]);
+const SHOTS = SHOT_LIST.map(([t0, sc, cam], i) => [sc + '-' + cam, i, t0, ERA_LIST[i][1], `${sc} (${cam})`]);
+const TIMELINE = {
+  width: W, height: H, fps: FPS, bpm: BPM, duration: DURATION, frames: NFRAMES, loop: LOOP_T, safe: SAFE,
+  format: 'beat-cut',   // F4 story, but the rush is tiles inside one shot (no 4-cut rush), so the F4 cut checks do not apply
+  shots: SHOTS.map(([key, era, t0, t1, title], i) => ({ id: i + 1, key, era, t0, t1, title })),
+  cuts: SHOT_LIST.slice(1).map(([t0]) => t0),
+  fastFrom: 19.0, fastTo: 21.0,
+  morphs: [],
+  cues: { sortStart: 17.5, rush: 19.0, sortEnd: 21.0 },
+  acts: [
+    { name: '1 Flash-forward', role: 'build',   t0: 0.0,  t1: 6.0 },
+    { name: '2 The loop',      role: 'journey', t0: 6.0,  t1: 15.0 },
+    { name: '3 The sort',      role: 'peak',    t0: 15.0, t1: 23.0 },
+    { name: '4 Rules',         role: 'journey', t0: 23.0, t1: 35.0 },
+    { name: '5 Quiet',         role: 'silence', t0: 35.0, t1: 37.0 },
+    { name: '6 Payoff',        role: 'gift',    t0: 37.0, t1: 40.5 },
+  ],
+  board: [
+    { t: 1.8,  title: '1 on top of its own score', sound: 'quiet pad', next: 'time-cut: rewind' },
+    { t: 5.2,  title: '2 it drew the bar itself', sound: 'pencil-scratch hit', next: 'cut into the machine' },
+    { t: 10.5, title: '3 Harness²: the loop', sound: 'groove, a pluck per lap', next: 'cut to the bar' },
+    { t: 14.6, title: '4 faster wrong', sound: 'riser', next: 'hard cut' },
+    { t: 16.7, title: '5 the question', sound: 'silence, then a hit', next: 'the plan becomes ink' },
+    { t: 20.4, title: '6 the sort', sound: 'a tick per tile', next: 'gather the 53' },
+    { t: 27.6, title: '7 rules and the judge', sound: 'a bounce', next: 'callback to the sheet' },
+    { t: 34.4, title: '8 the recipe', sound: 'groove thins', next: 'back to the old bar' },
+    { t: 36.0, title: '9 the old bar erases', sound: 'the lowest, 1.5s', next: 'hold' },
+    { t: 39.2, title: '10 the new bar', sound: 'the loudest hit, flat chord', next: 'end' },
+  ],
+  narration: [],
+};
+window.TIMELINE = TIMELINE;

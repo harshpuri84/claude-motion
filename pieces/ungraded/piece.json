@@ -1,0 +1,26 @@
+{
+  "name": "ungraded",
+  "title": "Ungraded, not unreliable",
+  "format": {
+    "width": 1080,
+    "height": 1350,
+    "fps": 24,
+    "bpm": 120,
+    "duration": 40.5,
+    "frames": 972
+  },
+  "storyFormat": "F4 mission (flash-forward open, plan in red dashes then done in ink, a 16th rush, silence, payoff)",
+  "style": "crosshatch",
+  "review": {
+    "safe": {
+      "top": 60,
+      "bottom": 60,
+      "right": 60
+    },
+    "refs": {}
+  },
+  "scenes": [
+    "src/hero.js",
+    "src/scenes.js"
+  ]
+}
