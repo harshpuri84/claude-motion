@@ -70,7 +70,7 @@ function sceneClimb() {
   drawPencil(OLD_BAR.x + OLD_BAR.w + 4, OLD_BAR.top - 6, -0.75, 210, 1, 'penA');
   for (let i = 0; i < 9; i++) { const R = RNG('conf', i), a = R.r(-2.6, -0.5), d = 120 + R.r(0, 70) + 10 * ((B + i) % 3); star4(680 + Math.cos(a) * d, 240 + Math.sin(a) * d, R.r(12, 20), C.ink); }
   clawd(OLD_BAR.x + OLD_BAR.w / 2, OLD_BAR.top - 78, 78, { key: 'hero', mood: 'happy' });
-  capCard(["AI agents aren't unreliable."], 1218, 58);
+  capCard(["Before you improve an agent,"], 1218, 58);
 }
 
 // ---- beat 6: the sort. 139 fields pass the question; Yes goes green, No goes grey
@@ -88,7 +88,7 @@ function sceneSort(o = {}) {
   ctx.restore();
   // the question: the plan in red dashes, the words in ink
   planInk(box(120, 215, 840, 104), { closed: true, key: 'qbox', frac: qf });
-  if (qf >= 1) handText('Did this value come from the input?', 150, 284, 46, C.ink, { key: 'q', frac: o.qText ?? 1 });
+  if (qf >= 1) handText('Is the agent responsible for this value?', 150, 284, 46, C.ink, { key: 'q', frac: o.qText ?? 1 });
   // the pile still to sort, the tile in flight, the bins
   const n = sortedAt(TT), s = 26, g = 4;
   const flying = TT >= TIMELINE.cues.sortStart && n < 139;
@@ -108,7 +108,7 @@ function sceneSort(o = {}) {
   handText(String(nx), 610, 838, 64, '#6d655a', { key: 'cx', weight: 700 }); handText('excluded', 610 + handW(String(nx), 64, 700) + 14, 834, 40, '#6d655a', { key: 'cxl' });
   clawd(905, 1170, 58, { key: 'hero', mood: 'wow' });
   topTag('From my August audit: 139 fields', 44);
-  if (!o.sheet) capCard(['86 were set downstream,', 'not read from the input.'], 1200, 48, { t0: TIMELINE.cues.rush - 0.6 });
+  if (!o.sheet) capCard(['86 were set downstream', 'by other systems.'], 1200, 48, { t0: TIMELINE.cues.rush - 0.6 });
 }
 
 // ---- beat 10: the payoff. Same chart, the old bar erased, a new one built from the 53 graded tiles
@@ -152,7 +152,7 @@ function sceneDraw() {
   drawPencil(OLD_BAR.x + OLD_BAR.w / 2 + wig, top + 4, -0.75, 210, 1, 'penA');
   for (let i = 0; i < 4; i++) ink([[OLD_BAR.x + 20 + i * 34, top + 18], [OLD_BAR.x + 44 + i * 34, top + 6]], { w: 2.4, color: C.terra, key: 'scr' + i + (B % 3) });
   clawd(OLD_BAR.x - 70, top - 50, 70, { key: 'hero', mood: 'smile' });
-  capCard(['Ungraded', 'ones are.'], 1200, 62, { colors: [C.terra, C.ink] });
+  capCard(["check what you're rewarding."], 1200, 62, { colors: [C.terra] });
 }
 
 // ---- beat 3: inside the machine. The loop tunes prompts, tools, memory; the self-written bar grows a step per lap
@@ -169,8 +169,8 @@ function sceneLoop() {
   // the score it keeps for itself, a step taller every lap
   const bh = 120 + Math.min(lap, 4) * 70;
   paint(box(810, 830 - bh, 110, bh), { fill: C.navy2, key: 'lbar', line: C.peri, w: 3, tex: [{ k: 'pencil', c: C.terra, al: 0.8, per: 24, a: -0.5 }] });
-  monoText('score', 812, 870, 30, C.peri, { key: 'lsc' });
-  capCard(['This month Google open-sourced Harness².', 'Agents that tune their own', 'prompts, tools and memory.'], 1150, 44);
+  monoText('harness', 812, 870, 30, C.peri, { key: 'lsc' });
+  capCard(['This month Google Research', 'open-sourced Harness². It tunes', "an agent's prompts, tools and memory."], 1150, 44);
 }
 
 // ---- beat 4: the bar shoots up; the pencil is its own
@@ -184,7 +184,7 @@ function sceneRise() {
   drawPencil(px, py, -0.75, 210, 1, 'penA');
   ink(ellipsePts(px + 70, py - 70, 120, 90, -0.7, 40), { closed: true, w: 4, color: C.ink, key: 'circ', frac: ev(E0 + 1.0, 0.4) });
   handText('its own pencil', OLD_BAR.x + OLD_BAR.w + 16, py + 190, 36, C.ink, { key: 'own', frac: ev(E0 + 1.3, 0.4) });
-  capCard(['Self-improvement climbs a score.', 'A wrong score means faster wrong.'], 1200, 48);
+  capCard(['A bad score can reward', 'the wrong behaviour.'], 1200, 48);
 }
 
 // ---- beat 5: the turn. Silence, the schema sheet, then the question slams on
@@ -219,12 +219,12 @@ function sceneRules() {
 function sceneRecipe() {
   paperSheet('rec');
   handText('Before an agent improves itself:', 90, 210, 54, C.ink, { key: 'rhead', frac: ev(E0 + 0.1, 0.5) });
-  const steps = [['1. List the fields it writes.', 'raw'], ['2. Keep the ones from the input.', 'green'], ['3. Rules first. Judge last.', 'yellow']];
+  const steps = [['1. List the fields it writes.', 'raw'], ["2. Grade the ones\nit's responsible for.", 'green'], ['3. Rules first. Judge last.', 'yellow']];
   steps.forEach(([txt, kind], i) => {
-    const t0 = E0 + 0.7 + i * 1.7, y = 420 + i * 230, w = handW(txt, 54) + 40;
-    planInk(box(80, y - 70, w + 120, 104), { closed: true, key: 'rp' + i, frac: ev(t0, 0.3) });
+    const ls = txt.split('\n'), t0 = E0 + 0.7 + i * 1.7, y = 420 + i * 230, ind = ls.length > 1 ? handW(ls[0].slice(0, 3), 54) : 0, w = Math.max(...ls.map((l, k) => handW(l, 54) + (k ? ind : 0))) + 40;
+    planInk(box(80, y - 70, w + 120, 104 + (ls.length - 1) * 64), { closed: true, key: 'rp' + i, frac: ev(t0, 0.3) });
     for (let k = 0; k < 3; k++) if (ev(t0 + 0.3, 0.2) > 0) tile(100 + k * 30, y - 46, 24, i === 2 && k === 2 ? 'yellow' : kind, 'ri' + i + k);
-    handText(txt, 210, y, 54, C.ink, { key: 'rt' + i, frac: ev(t0 + 0.45, 0.6) });
+    ls.forEach((l, k) => handText(l, 210 + (k ? ind : 0), y + k * 64, 54, C.ink, { key: 'rt' + i + k, frac: ev(t0 + 0.45 + k * 0.4, 0.6) }));
   });
   clawd(880, 1150, 70, { key: 'hero', mood: 'smile' });
 }
